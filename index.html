@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiller Temperature Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your existing CSS remains unchanged */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: #2d3748;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-top h1 {
+            color: #4a5568;
+            font-size: 2rem;
+        }
+        .header-top h1 i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .date-selector label {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        .date-selector input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #4a5568;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .search-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .search-input, .filter-select {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-select {
+            min-width: 150px;
+        }
+        .export-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .chiller-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .chiller-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .chiller-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        .chiller-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .chiller-title-info {
+            flex: 1;
+        }
+        .chiller-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        .chiller-title i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+        .chiller-subtitle {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+        .temp-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .temp-normal {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .temp-warning {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .temp-critical {
+            background: #fed7d7;
+            color: #742a2a;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .temp-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .time-group {
+            flex: 1;
+            min-width: 100px;
+        }
+        .time-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .temp-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .temp-input.warning {
+            border-color: #ed8936;
+            background-color: #fffaf0;
+        }
+        .temp-input.critical {
+            border-color: #e53e3e;
+            background-color: #fff5f5;
+        }
+        .chart-toggle {
+            margin-bottom: 15px;
+        }
+        .toggle-btn {
+            background: #edf2f7;
+            color: #4a5568;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        .toggle-btn:hover {
+            background: #e2e8f0;
+        }
+        .chart-container, .detailed-chart-container {
+            height: 150px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .detailed-chart-container {
+            display: none;
+            height: 300px;
+        }
+        .readings-details {
+            margin-bottom: 20px;
+        }
+        .readings-details h4 {
+            margin-bottom: 10px;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .readings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .readings-table th, .readings-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .readings-table th {
+            background: #f7fafc;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .reading-normal {
+            color: #38a169;
+        }
+        .reading-warning {
+            color: #dd6b20;
+        }
+        .reading-critical {
+            color: #e53e3e;
+            font-weight: 600;
+        }
+        .deviation-negative {
+            color: #38a169;
+        }
+        .deviation-positive {
+            color: #dd6b20;
+        }
+        .deviation-critical {
+            color: #e53e3e;
+            font-weight: 600;
+        }
+        .unit-info summary {
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .unit-info p {
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: block;
+            margin: 20px auto;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .dashboard-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .temp-summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .temp-stat {
+            text-align: center;
+            flex: 1;
+        }
+        .temp-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        .temp-stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .alert-normal {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .alert-warning {
+            background: #fff5e6;
+            color: #9c4221;
+        }
+        .alert-critical {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .alert-item i {
+            font-size: 1.5rem;
+        }
+        .signature-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .signature-inputs {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .signature-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.success {
+            background: #38a169;
+        }
+        .toast.error {
+            background: #e53e3e;
+        }
+        .notification-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1002;
+            display: none;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .notification-panel h3 {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-item.alert-normal {
+            background: #f0fff4;
+        }
+        .notification-item.alert-warning {
+            background: #fff5e6;
+        }
+        .notification-item.alert-critical {
+            background: #fff5f5;
+        }
+        .notification-item i {
+            font-size: 1.2rem;
+            margin-top: 3px;
+        }
+        .notification-item.alert-normal i {
+            color: #38a169;
+        }
+        .notification-item.alert-warning i {
+            color: #dd6b20;
+        }
+        .notification-item.alert-critical i {
+            color: #e53e3e;
+        }
+        .notification-time {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .search-container {
+                width: 100%;
+            }
+            .chiller-grid {
+                grid-template-columns: 1fr;
+            }
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .signature-inputs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="notification-panel" id="notificationPanel">
+        <h3><i class="fas fa-bell"></i> Notifications</h3>
+        <div id="notification-list">
+            <div class="notification-item alert-normal">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <p>All systems operating normally</p>
+                    <div class="notification-time">Just now</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <h1><i class="fas fa-temperature-low"></i> Temperature Monitor</h1>
+                <div class="header-controls">
+                    <div class="date-selector">
+                        <label for="currentDate">Date: </label>
+                        <input type="date" id="currentDate" value="">
+                    </div>
+                    <div class="notification-bell" id="notificationBell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search chillers...">
+                <select class="filter-select" id="statusFilter">
+                    <option value="all">All Status</option>
+                    <option value="normal">Normal</option>
+                    <option value="warning">Warning</option>
+                    <option value="critical">Critical</option>
+                </select>
+                <button class="export-btn" onclick="exportData()">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+            </div>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('fv-chillers', event)">
+                <i class="fas fa-carrot"></i> F&V Chillers
+            </button>
+            <button class="tab-btn" onclick="switchTab('dairy-chillers', event)">
+                <i class="fas fa-cheese"></i> Dairy Chillers
+            </button>
+            <button class="tab-btn" onclick="switchTab('island-freezers', event)">
+                <i class="fas fa-ice-cream"></i> Island Freezers
+            </button>
+            <button class="tab-btn" onclick="switchTab('big-freezer', event)">
+                <i class="fas fa-snowflake"></i> Big Freezer
+            </button>
+            <button class="tab-btn" onclick="switchTab('butchery', event)">
+                <i class="fas fa-drumstick-bite"></i> Butchery
+            </button>
+            <button class="tab-btn" onclick="switchTab('dashboard', event)">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+        </div>
+        <!-- Sections -->
+        <div id="fv-chillers" class="section active">
+            <div class="chiller-grid" id="fv-chillers-grid"></div>
+            <button class="save-btn" onclick="saveData('fv')">Save F&V Chiller Data</button>
+        </div>
+        <div id="dairy-chillers" class="section">
+            <div class="chiller-grid" id="dairy-chillers-grid"></div>
+            <button class="save-btn" onclick="saveData('dairy')">Save Dairy Chiller Data</button>
+        </div>
+        <div id="island-freezers" class="section">
+            <div class="chiller-grid" id="island-freezers-grid"></div>
+            <button class="save-btn" onclick="saveData('island')">Save Island Freezer Data</button>
+        </div>
+        <div id="big-freezer" class="section">
+            <div class="chiller-grid" id="big-freezer-grid"></div>
+            <button class="save-btn" onclick="saveData('big-freezer')">Save Big Freezer Data</button>
+        </div>
+        <div id="butchery" class="section">
+            <div class="chiller-grid" id="butchery-grid"></div>
+            <button class="save-btn" onclick="saveData('butchery')">Save Butchery Data</button>
+        </div>
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section">
+            <div class="dashboard">
+                <div class="dashboard-card">
+                    <div class="dashboard-title"><i class="fas fa-chart-bar"></i> Detailed Temperature Overview (All Units)</div>
+                    <div class="temp-summary">
+                        <div class="temp-stat">
+                            <div class="temp-stat-value" id="avg-temp">-</div>
+                            <div class="temp-stat-label">Avg Temp</div>
+                        </div>
+                        <div class="temp-stat">
+                            <div class="temp-stat-value" id="min-temp">-</div>
+                            <div class="temp-stat-label">Min Temp</div>
+                        </div>
+                        <div class="temp-stat">
+                            <div class="temp-stat-value" id="max-temp">-</div>
+                            <div class="temp-stat-label">Max Temp</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="overview-chart"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-title"><i class="fas fa-exclamation-triangle"></i> Alerts & Status</div>
+                    <div id="alert-list">
+                        <div class="alert-item alert-normal">
+                            <i class="fas fa-check-circle"></i>
+                            <p>All systems operating normally</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="signature-section">
+            <h3 style="margin-bottom: 15px; color: #2d3748; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-signature"></i> Digital Signatures
+            </h3>
+            <div class="signature-inputs">
+                <input type="text" class="signature-input" placeholder="Checker Name" id="checker-name">
+                <input type="text" class="signature-input" placeholder="Supervisor Name" id="supervisor-name">
+            </div>
+        </div>
+    </div>
+    <script>
+        // Enhanced data structure
+        const CHILLER_DATA = {
+            'fv': [
+                { id: 'fv1', name: 'Chiller 1 - GARLIC', subtitle: 'ID: FV-CH-001 | Location: F&V Section A', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-garlic' },
+                { id: 'fv2', name: 'Chiller 2 - LETTUCE', subtitle: 'ID: FV-CH-002 | Location: F&V Section B', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-leaf' },
+                { id: 'fv3', name: 'Chiller 3 - CARROTS', subtitle: 'ID: FV-CH-003 | Location: F&V Section C', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-carrot' },
+                { id: 'fv4', name: 'Chiller 4 - APPLES', subtitle: 'ID: FV-CH-004 | Location: F&V Section D', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-apple-alt' },
+                { id: 'fv5', name: 'Chiller 5 - GRAPES', subtitle: 'ID: FV-CH-005 | Location: F&V Section E', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-grapes' }
+            ],
+            'dairy': [
+                { id: 'dairy1', name: 'Chiller 1 - MILK', subtitle: 'ID: DA-CH-001 | Location: Dairy Section A', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-glass-whiskey' },
+                { id: 'dairy2', name: 'Chiller 2 - PARMALAT', subtitle: 'ID: DA-CH-002 | Location: Dairy Section J', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-wine-bottle' },
+                { id: 'dairy3', name: 'Chiller 3 - CLOVER', subtitle: 'ID: DA-CH-003 | Location: Dairy Section B', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-cheese' },
+                { id: 'dairy4', name: 'Chiller 4 - TROPIKA', subtitle: 'ID: DA-CH-004 | Location: Dairy Section C', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-wine-bottle' },
+                { id: 'dairy5', name: 'Chiller 5 - NECTAR', subtitle: 'ID: DA-CH-005 | Location: Dairy Section D', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-wine-bottle' },
+                { id: 'dairy6', name: 'Chiller 6 - FLORA', subtitle: 'ID: DA-CH-006 | Location: Dairy Section E', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-cheese' },
+                { id: 'dairy7', name: 'Chiller 7 - CHEESE', subtitle: 'ID: DA-CH-007 | Location: Dairy Section F', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-cheese' },
+                { id: 'dairy8', name: 'Chiller 8 - MAAS', subtitle: 'ID: DA-CH-008 | Location: Dairy Section G', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-glass-whiskey' },
+                { id: 'dairy9', name: 'Chiller 9 - MAAS', subtitle: 'ID: DA-CH-009 | Location: Dairy Section H', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-glass-whiskey' },
+                { id: 'dairy10', name: 'Chiller 10 - POLONY', subtitle: 'ID: DA-CH-010 | Location: Dairy Section I', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-drumstick-bite' }
+            ],
+            'island': [
+                { id: 'island1', name: 'Island 1 - ICE CREAM', subtitle: 'ID: IF-001 | Location: Freezer Isle A', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-ice-cream' },
+                { id: 'island2', name: 'Island 2 - SOYA/MCCAIN', subtitle: 'ID: IF-002 | Location: Freezer Isle B', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-box' },
+                { id: 'island3', name: 'Island 3 - MCCAIN 1KG', subtitle: 'ID: IF-003 | Location: Freezer Isle C', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-weight' },
+                { id: 'island4', name: 'Island 4 - COUNTRY MIX/PUFF PASTRY', subtitle: 'ID: IF-004 | Location: Freezer Isle D', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-pastafarianism' },
+                { id: 'island5', name: 'Island 5 - TODAYS/IDEALS', subtitle: 'ID: IF-005 | Location: Freezer Isle E', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-tags' },
+                { id: 'island6', name: 'Island 6 - RAINBOW/HAKE', subtitle: 'ID: IF-006 | Location: Freezer Isle F', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-fish' }
+            ],
+            'big-freezer': [
+                { id: 'big1', name: 'Freezer 1 - CHILLER ROOM', subtitle: 'ID: BF-001 | Location: Back Storage', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-store' },
+                { id: 'big2', name: 'Freezer 2 - ICE CREAM', subtitle: 'ID: BF-002 | Location: Back Storage', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-ice-cream' },
+                { id: 'big3', name: 'Freezer 3 - CHICKEN', subtitle: 'ID: BF-003 | Location: Back Storage', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-drumstick-bite' },
+                { id: 'big4', name: 'Freezer 4 - INSIDE STORAGE', subtitle: 'ID: BF-004 | Location: Back Storage', targetTemp: -20, minTemp: -22, maxTemp: -18, icon: 'fas fa-boxes' }
+            ],
+            'butchery': [
+                { id: 'butchery1', name: 'Unit 1 - BEEF DISPLAY', subtitle: 'ID: BU-001 | Location: Butchery Front', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-hamburger' },
+                { id: 'butchery2', name: 'Unit 2 - WORS COUNTER', subtitle: 'ID: BU-002 | Location: Butchery Front', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-hotdog' },
+                { id: 'butchery3', name: 'Unit 3 - BEEF COUNTER', subtitle: 'ID: BU-003 | Location: Butchery Front', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-drumstick-bite' },
+                { id: 'butchery4', name: 'Unit 4 - SHEEP/LAMB COUNTER', subtitle: 'ID: BU-004 | Location: Butchery Front', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-paw' },
+                { id: 'butchery5', name: 'Unit 5 - CHICKEN/FISH COUNTER', subtitle: 'ID: BU-005 | Location: Butchery Front', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-fish' },
+                { id: 'butchery6', name: 'Unit 6 - CHICKEN DISPLAY', subtitle: 'ID: BU-006 | Location: Butchery Front', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-egg' },
+                { id: 'butchery7', name: 'Unit 7 - BUTCHERY CHILLER', subtitle: 'ID: BU-007 | Location: Butchery Back', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-temperature-low' },
+                { id: 'butchery8', name: 'Unit 8 - BUTCHERY CONTAINER 1', subtitle: 'ID: BU-008 | Location: Butchery Back', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-box' },
+                { id: 'butchery9', name: 'Unit 9 - BUTCHERY CONTAINER 2', subtitle: 'ID: BU-009 | Location: Butchery Back', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-box' }
+            ]
+        };
+        // Initialize date to today
+        document.getElementById('currentDate').valueAsDate = new Date();
+        // Global variables
+        let temperatureData = {};
+        let charts = {};
+        let detailedCharts = {};
+        let notifications = [];
+        // Load saved data from localStorage on startup
+        function loadSavedDataFromStorage() {
+            const saved = localStorage.getItem('temperatureData');
+            if (saved) {
+                try {
+                    temperatureData = JSON.parse(saved);
+                    console.log('✅ Data loaded from localStorage');
+                } catch (e) {
+                    console.error('Failed to parse saved data', e);
+                    temperatureData = {};
+                }
+            } else {
+                temperatureData = {};
+            }
+        }
+        // Initialize the application
+        function initApp() {
+            showLoading();
+            // ✅ Load saved data FIRST
+            loadSavedDataFromStorage();
+            // Generate chiller cards for all sections
+            generateChillerCards('fv', 'fv-chillers-grid');
+            generateChillerCards('dairy', 'dairy-chillers-grid');
+            generateChillerCards('island', 'island-freezers-grid');
+            generateChillerCards('big-freezer', 'big-freezer-grid');
+            generateChillerCards('butchery', 'butchery-grid');
+            // ✅ Load data for current date
+            loadSavedData();
+            // Initialize charts after everything is loaded
+            setTimeout(() => {
+                initializeCharts();
+                hideLoading();
+            }, 600);
+            // Set up event listeners
+            setupEventListeners();
+            // Initialize dashboard if active
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                initializeDashboard();
+            }
+        }
+        // Generate chiller cards dynamically
+        function generateChillerCards(section, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            CHILLER_DATA[section].forEach(chiller => {
+                const card = document.createElement('div');
+                card.className = 'chiller-card';
+                card.dataset.id = chiller.id;
+                card.dataset.section = section;
+                card.innerHTML = `
+                    <div class="chiller-header">
+                        <div class="chiller-title-info">
+                            <div class="chiller-title"><i class="${chiller.icon}"></i> ${chiller.name}</div>
+                            <div class="chiller-subtitle">${chiller.subtitle}</div>
+                        </div>
+                        <div class="temp-status temp-normal" id="status-${chiller.id}">Normal</div>
+                    </div>
+                    <div class="temp-inputs">
+                        <div class="time-group">
+                            <div class="time-label"><i class="fas fa-clock"></i> 08:00</div>
+                            <input type="number" class="temp-input" id="${chiller.id}-08" placeholder="°C" step="0.1" min="${chiller.minTemp - 5}" max="${chiller.maxTemp + 5}">
+                        </div>
+                        <div class="time-group">
+                            <div class="time-label"><i class="fas fa-clock"></i> 12:00</div>
+                            <input type="number" class="temp-input" id="${chiller.id}-12" placeholder="°C" step="0.1" min="${chiller.minTemp - 5}" max="${chiller.maxTemp + 5}">
+                        </div>
+                        <div class="time-group">
+                            <div class="time-label"><i class="fas fa-clock"></i> 17:00</div>
+                            <input type="number" class="temp-input" id="${chiller.id}-17" placeholder="°C" step="0.1" min="${chiller.minTemp - 5}" max="${chiller.maxTemp + 5}">
+                        </div>
+                    </div>
+                    <div class="chart-toggle">
+                        <button class="toggle-btn" onclick="toggleDetailedChart('${chiller.id}')">
+                            <i class="fas fa-chart-line"></i> Show Detailed Chart
+                        </button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chart-${chiller.id}"></canvas>
+                    </div>
+                    <div class="detailed-chart-container" id="detailed-chart-${chiller.id}">
+                        <canvas id="detailed-chart-canvas-${chiller.id}"></canvas>
+                    </div>
+                    <div class="readings-details">
+                        <h4><i class="fas fa-history"></i> Recent Readings</h4>
+                        <table class="readings-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Temp (°C)</th>
+                                    <th>Status</th>
+                                    <th>Deviation (°C)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>08:00</td>
+                                    <td id="${chiller.id}-08-display">-</td>
+                                    <td id="${chiller.id}-08-status">-</td>
+                                    <td id="${chiller.id}-08-deviation">-</td>
+                                </tr>
+                                <tr>
+                                    <td>12:00</td>
+                                    <td id="${chiller.id}-12-display">-</td>
+                                    <td id="${chiller.id}-12-status">-</td>
+                                    <td id="${chiller.id}-12-deviation">-</td>
+                                </tr>
+                                <tr>
+                                    <td>17:00</td>
+                                    <td id="${chiller.id}-17-display">-</td>
+                                    <td id="${chiller.id}-17-status">-</td>
+                                    <td id="${chiller.id}-17-deviation">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="unit-info">
+                        <details>
+                            <summary><i class="fas fa-info-circle"></i> Unit Information</summary>
+                            <p><strong>Target Temperature:</strong> ${chiller.targetTemp}°C (Range: ${chiller.minTemp}°C to ${chiller.maxTemp}°C)</p>
+                            <p><i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> Temperatures outside ${chiller.minTemp - 2}°C to ${chiller.maxTemp + 2}°C will trigger alerts</p>
+                        </details>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        // Set up event listeners
+        function setupEventListeners() {
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('temp-input')) {
+                    updateStatus(e.target.id);
+                }
+            });
+            document.getElementById('searchInput').addEventListener('input', filterChillers);
+            document.getElementById('statusFilter').addEventListener('change', filterChillers);
+            document.getElementById('notificationBell').addEventListener('click', toggleNotifications);
+            document.getElementById('currentDate').addEventListener('change', function() {
+                loadSavedData();
+                setTimeout(initializeCharts, 100);
+                if (document.getElementById('dashboard').classList.contains('active')) {
+                    setTimeout(initializeDashboard, 150);
+                }
+            });
+            setInterval(autoSaveDraft, 30000);
+        }
+        // Switch between tabs
+        function switchTab(tabName, event) {
+            showLoading();
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            setTimeout(() => {
+                if (tabName === 'dashboard') {
+                    initializeDashboard();
+                } else {
+                    initializeCharts();
+                }
+                hideLoading();
+            }, 300);
+        }
+        // Toggle detailed chart view
+        function toggleDetailedChart(unitId) {
+            const detailedChartContainer = document.getElementById(`detailed-chart-${unitId}`);
+            const toggleBtn = detailedChartContainer.previousElementSibling.querySelector('.toggle-btn');
+            if (detailedChartContainer.style.display === 'block') {
+                detailedChartContainer.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="fas fa-chart-line"></i> Show Detailed Chart';
+            } else {
+                detailedChartContainer.style.display = 'block';
+                toggleBtn.innerHTML = '<i class="fas fa-chart-line"></i> Hide Detailed Chart';
+                initializeDetailedChart(unitId);
+            }
+        }
+        // Initialize charts for the current tab
+        function initializeCharts() {
+            const activeSection = document.querySelector('.section.active');
+            if (!activeSection) return;
+            const chartCanvases = activeSection.querySelectorAll('.chart-container canvas');
+            chartCanvases.forEach(canvas => {
+                const chartId = canvas.id;
+                if (charts[chartId]) charts[chartId].destroy();
+                const ctx = canvas.getContext('2d');
+                const unitId = chartId.replace('chart-', '');
+                const chillerData = getChillerData(unitId);
+                if (!chillerData) return;
+                let minTemp, maxTemp, borderColor, bgColor;
+                if (['fv', 'dairy', 'butchery'].includes(chillerData.section)) {
+                    minTemp = chillerData.minTemp - 5;
+                    maxTemp = chillerData.maxTemp + 5;
+                    borderColor = '#48bb78';
+                    bgColor = 'rgba(72, 187, 120, 0.1)';
+                } else {
+                    minTemp = chillerData.minTemp - 5;
+                    maxTemp = chillerData.maxTemp + 5;
+                    borderColor = '#4299e1';
+                    bgColor = 'rgba(66, 153, 225, 0.1)';
+                }
+                const timeSlots = ['08', '12', '17'];
+                const data = timeSlots.map(slot => {
+                    const input = document.getElementById(`${unitId}-${slot}`);
+                    return input && input.value ? parseFloat(input.value) : null;
+                });
+                const sampleData = data.some(val => val !== null) ? data : [
+                    chillerData.targetTemp + (Math.random() * 2 - 1),
+                    chillerData.targetTemp + (Math.random() * 2 - 1),
+                    chillerData.targetTemp + (Math.random() * 2 - 1)
+                ];
+                charts[chartId] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['08:00', '12:00', '17:00'],
+                        datasets: [{
+                            label: 'Temperature (°C)',
+                            data: sampleData,
+                            borderColor: borderColor,
+                            backgroundColor: bgColor,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: borderColor,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: minTemp,
+                                max: maxTemp,
+                                grid: { color: 'rgba(0,0,0,0.1)' },
+                                ticks: { callback: value => value + '°C' }
+                            },
+                            x: { grid: { color: 'rgba(0,0,0,0.1)' } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                cornerRadius: 8,
+                                callbacks: {
+                                    label: context => {
+                                        let label = context.dataset.label || '';
+                                        if (label && context.parsed.y !== null) {
+                                            label += ': ' + context.parsed.y.toFixed(1) + '°C';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        interaction: { intersect: false, mode: 'index' }
+                    }
+                });
+            });
+        }
+        // Initialize detailed chart with positive/negative visualization
+        function initializeDetailedChart(unitId) {
+            const canvasId = `detailed-chart-canvas-${unitId}`;
+            if (detailedCharts[canvasId]) detailedCharts[canvasId].destroy();
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const chillerData = getChillerData(unitId);
+            if (!chillerData) return;
+            const timeSlots = ['08', '12', '17'];
+            const temps = timeSlots.map(slot => {
+                const input = document.getElementById(`${unitId}-${slot}`);
+                return input && input.value ? parseFloat(input.value) : null;
+            });
+            const deviations = temps.map(temp => temp !== null ? temp - chillerData.targetTemp : null);
+            const positiveGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            positiveGradient.addColorStop(0, 'rgba(237, 137, 54, 0.6)');
+            positiveGradient.addColorStop(1, 'rgba(237, 137, 54, 0.1)');
+            const negativeGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            negativeGradient.addColorStop(0, 'rgba(72, 187, 120, 0.6)');
+            negativeGradient.addColorStop(1, 'rgba(72, 187, 120, 0.1)');
+            const positiveData = deviations.map((dev, index) => dev > 0 ? dev : null);
+            const negativeData = deviations.map((dev, index) => dev < 0 ? Math.abs(dev) : null);
+            detailedCharts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['08:00', '12:00', '17:00'],
+                    datasets: [
+                        {
+                            label: 'Positive Deviation (°C)',
+                            data: positiveData,
+                            backgroundColor: positiveGradient,
+                            borderColor: '#ed8936',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Negative Deviation (°C)',
+                            data: negativeData,
+                            backgroundColor: negativeGradient,
+                            borderColor: '#48bb78',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Deviation from Target (°C)' },
+                            grid: { color: 'rgba(0,0,0,0.1)' }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: context => {
+                                    const datasetLabel = context.dataset.label || '';
+                                    const value = context.parsed.y !== null ? context.parsed.y.toFixed(1) : 'N/A';
+                                    let sign = '';
+                                    if (datasetLabel.includes('Positive')) sign = '+';
+                                    else if (datasetLabel.includes('Negative')) sign = '-';
+                                    return `${datasetLabel}: ${sign}${value}°C`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        // ✅ Updated Dashboard: Shows all chillers/freezers
+        function initializeDashboard() {
+            const ctx = document.getElementById('overview-chart').getContext('2d');
+            if (charts['overview-chart']) charts['overview-chart'].destroy();
+            const unitData = [];
+            for (const sectionKey in CHILLER_DATA) {
+                CHILLER_DATA[sectionKey].forEach(chiller => {
+                    const unitId = chiller.id;
+                    const unitName = `${chiller.name}`;
+                    const timeSlots = ['08', '12', '17'];
+                    const temps = timeSlots.map(slot => {
+                        const input = document.getElementById(`${unitId}-${slot}`);
+                        return input && input.value ? parseFloat(input.value) : null;
+                    }).filter(temp => temp !== null);
+                    const avgTemp = temps.length ? (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1) : 0;
+                    let color = '#48bb78';
+                    if (temps.some(t => t < chiller.minTemp || t > chiller.maxTemp)) color = '#ed8936';
+                    if (temps.some(t => t < chiller.minTemp - 2 || t > chiller.maxTemp + 2)) color = '#e53e3e';
+                    unitData.push({ unitName, avgTemp: parseFloat(avgTemp), color });
+                });
+            }
+            unitData.sort((a, b) => a.avgTemp - b.avgTemp);
+            const labels = unitData.map(d => d.unitName);
+            const data = unitData.map(d => d.avgTemp);
+            const colors = unitData.map(d => d.color);
+            const allTemps = data.filter(temp => temp > 0);
+            document.getElementById('avg-temp').textContent = allTemps.length
+                ? (allTemps.reduce((a, b) => a + b, 0) / allTemps.length).toFixed(1) + '°C'
+                : '-';
+            document.getElementById('min-temp').textContent = allTemps.length
+                ? Math.min(...allTemps).toFixed(1) + '°C'
+                : '-';
+            document.getElementById('max-temp').textContent = allTemps.length
+                ? Math.max(...allTemps).toFixed(1) + '°C'
+                : '-';
+            charts['overview-chart'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Average Temp (°C)',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Temperature (°C)' },
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: { callback: value => value + '°C' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxRotation: 60, minRotation: 45 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: context => `Avg: ${context.parsed.y}°C`
+                            }
+                        }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
+                }
+            });
+            updateAlerts();
+        }
+        // Update status when temperature input changes
+        function updateStatus(inputId) {
+            const input = document.getElementById(inputId);
+            const temp = parseFloat(input.value);
+            if (isNaN(temp)) { resetInputStyle(input); return; }
+            const unitId = inputId.split('-')[0];
+            const timeSlot = inputId.split('-')[1];
+            const statusElement = document.getElementById('status-' + unitId);
+            const chillerData = getChillerData(unitId);
+            if (!chillerData) return;
+            let status, statusClass, inputClass;
+            if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
+                status = 'Critical';
+                statusClass = 'temp-critical';
+                inputClass = 'critical';
+                addNotification(`${unitId} temperature critical: ${temp}°C at ${timeSlot}:00`, 'critical');
+            } else if (temp < chillerData.minTemp || temp > chillerData.maxTemp) {
+                status = 'Warning';
+                statusClass = 'temp-warning';
+                inputClass = 'warning';
+                addNotification(`${unitId} temperature warning: ${temp}°C at ${timeSlot}:00`, 'warning');
+            } else {
+                status = 'Normal';
+                statusClass = 'temp-normal';
+                inputClass = '';
+            }
+            if (statusElement) {
+                statusElement.textContent = status;
+                statusElement.className = `temp-status ${statusClass}`;
+            }
+            resetInputStyle(input);
+            if (inputClass) input.classList.add(inputClass);
+            updateChart(unitId, inputId, temp);
+            updateReadingsTable(inputId, temp, status);
+            const detailedChartContainer = document.getElementById(`detailed-chart-${unitId}`);
+            if (detailedChartContainer.style.display === 'block') {
+                initializeDetailedChart(unitId);
+            }
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                initializeDashboard();
+            }
+        }
+        // Reset input styling
+        function resetInputStyle(input) {
+            input.classList.remove('warning', 'critical');
+        }
+        // Update chart with new data
+        function updateChart(unitId, inputId, temp) {
+            const chartId = 'chart-' + unitId;
+            const chart = charts[chartId];
+            if (chart) {
+                const timeSlot = inputId.split('-')[1];
+                const dataIndex = { '08': 0, '12': 1, '17': 2 }[timeSlot];
+                if (dataIndex !== undefined) {
+                    chart.data.datasets[0].data[dataIndex] = temp;
+                    chart.update('none');
+                }
+            }
+        }
+        // Update readings table
+        function updateReadingsTable(inputId, temp, statusText) {
+            const timeSlot = inputId.split('-')[1];
+            const unitId = inputId.split('-')[0];
+            const chillerData = getChillerData(unitId);
+            if (!chillerData) return;
+            const displayCell = document.getElementById(`${inputId}-display`);
+            const statusCell = document.getElementById(`${inputId}-status`);
+            if (displayCell) displayCell.textContent = isNaN(temp) ? '-' : temp.toFixed(1) + '°C';
+            if (statusCell) {
+                statusCell.textContent = statusText;
+                statusCell.className = '';
+                if (statusText === 'Normal') statusCell.classList.add('reading-normal');
+                else if (statusText === 'Warning') statusCell.classList.add('reading-warning');
+                else if (statusText === 'Critical') statusCell.classList.add('reading-critical');
+            }
+            const deviationCell = document.getElementById(`${inputId}-deviation`);
+            if (deviationCell) {
+                if (isNaN(temp)) {
+                    deviationCell.textContent = '-';
+                    deviationCell.className = '';
+                } else {
+                    const deviation = temp - chillerData.targetTemp;
+                    deviationCell.textContent = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
+                    deviationCell.className = '';
+                    if (deviation < -2 || deviation > 2) deviationCell.classList.add('deviation-critical');
+                    else if (deviation < 0) deviationCell.classList.add('deviation-negative');
+                    else if (deviation > 0) deviationCell.classList.add('deviation-positive');
+                }
+            }
+        }
+        // Save data for a section - FIXED VERSION
+        function saveData(sectionKey) { // Renamed parameter for clarity
+            const date = document.getElementById('currentDate').value;
+            const checkerName = document.getElementById('checker-name').value;
+            const supervisorName = document.getElementById('supervisor-name').value;
+            if (!checkerName) {
+                showToast('Please enter checker name', 'error');
+                document.getElementById('checker-name').focus();
+                return;
+            }
+
+            // Determine the correct grid container ID based on the section key
+            let gridContainerId;
+            if (sectionKey === 'fv' || sectionKey === 'dairy') {
+                gridContainerId = `${sectionKey}-chillers-grid`; // e.g., 'fv-chillers-grid'
+            } else if (sectionKey === 'island') {
+                gridContainerId = `island-freezers-grid`; // Correct ID for island freezers
+            } else if (sectionKey === 'big-freezer') {
+                gridContainerId = `big-freezer-grid`; // Correct ID for big freezer
+            } else if (sectionKey === 'butchery') {
+                gridContainerId = `butchery-grid`; // Correct ID for butchery
+            } else {
+                // Fallback or handle unexpected section keys
+                console.error(`Unknown section key: ${sectionKey}`);
+                showToast(`Error saving data for ${sectionKey}: Unknown section`, 'error');
+                return;
+            }
+
+            const data = {
+                date: date,
+                checker: checkerName,
+                supervisor: supervisorName,
+                temperatures: {},
+                timestamp: new Date().toISOString()
+            };
+
+            // Get all inputs for this section using the corrected ID
+            const sectionGrid = document.getElementById(gridContainerId);
+            if (!sectionGrid) {
+                console.error(`Grid container with ID '${gridContainerId}' not found.`);
+                showToast(`Error saving data for ${sectionKey}: Section container not found.`, 'error');
+                return; // Exit if container not found
+            }
+
+            const inputs = sectionGrid.querySelectorAll('input.temp-input');
+            inputs.forEach(input => {
+                if (input.value) {
+                    data.temperatures[input.id] = parseFloat(input.value);
+                }
+            });
+
+            // Initialize temperatureData structure if needed
+            if (!temperatureData[date]) {
+                temperatureData[date] = {};
+            }
+
+            // Save the section data using the original sectionKey
+            temperatureData[date][sectionKey] = data;
+
+            // ✅ Save to localStorage
+            localStorage.setItem('temperatureData', JSON.stringify(temperatureData));
+
+            const tempCount = Object.keys(data.temperatures).length;
+            showToast(`${sectionKey.toUpperCase()} data saved successfully! ${tempCount} readings recorded.`, 'success');
+            addNotification(`${sectionKey.toUpperCase()} data saved for ${date}`, 'normal');
+        }
+        // Load saved data for current date
+        function loadSavedData() {
+            const date = document.getElementById('currentDate').value;
+            // Reset all inputs first
+            document.querySelectorAll('.temp-input').forEach(input => {
+                input.value = '';
+                resetInputStyle(input);
+            });
+            document.querySelectorAll('.temp-status').forEach(el => {
+                el.textContent = 'Normal';
+                el.className = 'temp-status temp-normal';
+            });
+            document.querySelectorAll('[id$="-display"], [id$="-status"], [id$="-deviation"]').forEach(el => {
+                el.textContent = '-';
+                el.className = '';
+            });
+            // Check if we have data for this date
+            if (temperatureData[date]) {
+                // Load checker and supervisor names
+                const firstSection = Object.keys(temperatureData[date])[0];
+                if (firstSection && temperatureData[date][firstSection]) {
+                    const data = temperatureData[date][firstSection];
+                    if (data.checker) document.getElementById('checker-name').value = data.checker;
+                    if (data.supervisor) document.getElementById('supervisor-name').value = data.supervisor;
+                }
+                // Load temperature data for all sections
+                Object.keys(temperatureData[date]).forEach(section => {
+                    const data = temperatureData[date][section];
+                    if (data && data.temperatures) {
+                        Object.keys(data.temperatures).forEach(inputId => {
+                            const input = document.getElementById(inputId);
+                            if (input) {
+                                input.value = data.temperatures[inputId];
+                                updateStatus(inputId);
+                            }
+                        });
+                    }
+                });
+                showToast('Data loaded successfully', 'success');
+            }
+        }
+        // Auto-save draft
+        function autoSaveDraft() {
+            const date = document.getElementById('currentDate').value;
+            const draftData = {
+                date: date,
+                temperatures: {},
+                timestamp: new Date().toISOString()
+            };
+            document.querySelectorAll('.temp-input').forEach(input => {
+                if (input.value) {
+                    draftData.temperatures[input.id] = parseFloat(input.value);
+                }
+            });
+            localStorage.setItem('temperatureDraft', JSON.stringify(draftData));
+        }
+        // Filter chillers based on search and status
+        function filterChillers() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            document.querySelectorAll('.chiller-card').forEach(card => {
+                const title = card.querySelector('.chiller-title').textContent.toLowerCase();
+                const subtitle = card.querySelector('.chiller-subtitle').textContent.toLowerCase();
+                const status = card.querySelector('.temp-status').textContent.toLowerCase();
+                const matchesSearch = title.includes(searchText) || subtitle.includes(searchText);
+                const matchesStatus = statusFilter === 'all' || status === statusFilter;
+                card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
+            });
+        }
+        // Export data as CSV
+        function exportData() {
+            const date = document.getElementById('currentDate').value;
+            let csvContent = "text/csv;charset=utf-8,";
+            csvContent += "Chiller Temperature Data - " + date + "\n";
+            csvContent += "Section,Unit,Time,Temperature,Status,Deviation\n";
+            document.querySelectorAll('.chiller-card').forEach(card => {
+                const section = card.dataset.section;
+                const unitId = card.dataset.id;
+                const unitName = card.querySelector('.chiller-title').textContent;
+                ['08', '12', '17'].forEach(time => {
+                    const tempInput = document.getElementById(`${unitId}-${time}`);
+                    const temp = tempInput.value || '';
+                    const statusCell = document.getElementById(`${unitId}-${time}-status`);
+                    const status = statusCell.textContent;
+                    const deviationCell = document.getElementById(`${unitId}-${time}-deviation`);
+                    const deviation = deviationCell.textContent;
+                    csvContent += `"${section}","${unitName}","${time}:00","${temp}","${status}","${deviation}"\n`;
+                });
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `temperature_data_${date}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Data exported successfully', 'success');
+        }
+        // Show notification panel
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('notificationBadge').textContent = '0';
+        }
+        // Add notification
+        function addNotification(message, type = 'normal') {
+            const notification = { message, type, time: new Date() };
+            notifications.unshift(notification);
+            if (notifications.length > 50) notifications.pop();
+            updateNotificationPanel();
+            if (type !== 'normal') {
+                const badge = document.getElementById('notificationBadge');
+                badge.textContent = parseInt(badge.textContent) + 1;
+            }
+        }
+        // Update notification panel
+        function updateNotificationPanel() {
+            const container = document.getElementById('notification-list');
+            container.innerHTML = '';
+            notifications.forEach(notification => {
+                const item = document.createElement('div');
+                item.className = `notification-item alert-${notification.type}`;
+                let icon = 'fas fa-info-circle';
+                if (notification.type === 'warning') icon = 'fas fa-exclamation-triangle';
+                if (notification.type === 'critical') icon = 'fas fa-exclamation-circle';
+                item.innerHTML = `<i class="${icon}"></i><div><p>${notification.message}</p><div class="notification-time">${formatTime(notification.time)}</div></div>`;
+                container.appendChild(item);
+            });
+        }
+        // Update alerts on dashboard
+        function updateAlerts() {
+            const alertList = document.getElementById('alert-list');
+            alertList.innerHTML = '';
+            const criticalAlerts = document.querySelectorAll('.temp-status.temp-critical');
+            if (criticalAlerts.length > 0) {
+                criticalAlerts.forEach(alert => {
+                    const unitId = alert.id.replace('status-', '');
+                    const unitName = document.querySelector(`[data-id="${unitId}"] .chiller-title`).textContent;
+                    const alertItem = document.createElement('div');
+                    alertItem.className = 'alert-item alert-critical';
+                    alertItem.innerHTML = `<i class="fas fa-exclamation-circle"></i><p>CRITICAL: ${unitName} requires immediate attention</p>`;
+                    alertList.appendChild(alertItem);
+                });
+            }
+            const warningAlerts = document.querySelectorAll('.temp-status.temp-warning');
+            if (warningAlerts.length > 0) {
+                warningAlerts.forEach(alert => {
+                    const unitId = alert.id.replace('status-', '');
+                    const unitName = document.querySelector(`[data-id="${unitId}"] .chiller-title`).textContent;
+                    const alertItem = document.createElement('div');
+                    alertItem.className = 'alert-item alert-warning';
+                    alertItem.innerHTML = `<i class="fas fa-exclamation-triangle"></i><p>WARNING: ${unitName} needs checking</p>`;
+                    alertList.appendChild(alertItem);
+                });
+            }
+            if (criticalAlerts.length === 0 && warningAlerts.length === 0) {
+                const alertItem = document.createElement('div');
+                alertItem.className = 'alert-item alert-normal';
+                alertItem.innerHTML = `<i class="fas fa-check-circle"></i><p>All systems operating normally</p>`;
+                alertList.appendChild(alertItem);
+            }
+        }
+        // Show loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        // Helper function to get chiller data by ID
+        function getChillerData(unitId) {
+            for (const section in CHILLER_DATA) {
+                const chiller = CHILLER_DATA[section].find(item => item.id === unitId);
+                if (chiller) return { ...chiller, section };
+            }
+            return null;
+        }
+        // Helper function to get all temperatures
+        function getAllTemperatures() {
+            const temps = [];
+            document.querySelectorAll('.temp-input').forEach(input => {
+                if (input.value) temps.push(parseFloat(input.value));
+            });
+            return temps;
+        }
+        // Helper function to format time
+        function formatTime(date) {
+            return new Date(date).toLocaleTimeString();
+        }
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
