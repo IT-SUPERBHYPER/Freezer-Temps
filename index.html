@@ -22,13 +22,11 @@
             --glass: rgba(255, 255, 255, 0.1);
             --border: rgba(255, 255, 255, 0.1);
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Exo 2', sans-serif;
             background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
@@ -38,7 +36,6 @@
             overflow-x: hidden;
             position: relative;
         }
-
         body::before {
             content: '';
             position: fixed;
@@ -52,13 +49,11 @@
                 radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 40%);
             z-index: -1;
         }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
             position: relative;
         }
-
         .header {
             background: var(--glass);
             backdrop-filter: blur(20px);
@@ -70,7 +65,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .header::after {
             content: '';
             position: absolute;
@@ -81,12 +75,10 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
             animation: glow 3s infinite alternate;
         }
-
         @keyframes glow {
             0% { opacity: 0.5; }
             100% { opacity: 1; }
         }
-
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -95,7 +87,6 @@
             flex-wrap: wrap;
             gap: 20px;
         }
-
         .header-top h1 {
             font-family: 'Orbitron', sans-serif;
             color: var(--light);
@@ -104,25 +95,21 @@
             text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
             position: relative;
         }
-
         .header-top h1 i {
             margin-right: 15px;
             color: var(--primary);
             font-size: 2rem;
         }
-
         .header-controls {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-
         .date-selector label {
             font-weight: 600;
             margin-right: 8px;
             color: var(--primary);
         }
-
         .date-selector input {
             padding: 10px 15px;
             border: 1px solid var(--border);
@@ -133,13 +120,11 @@
             font-family: 'Exo 2', sans-serif;
             transition: all 0.3s ease;
         }
-
         .date-selector input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .notification-bell {
             position: relative;
             cursor: pointer;
@@ -147,12 +132,10 @@
             color: var(--light);
             transition: all 0.3s ease;
         }
-
         .notification-bell:hover {
             color: var(--primary);
             transform: scale(1.1);
         }
-
         .notification-badge {
             position: absolute;
             top: -8px;
@@ -169,13 +152,11 @@
             font-weight: bold;
             box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
         }
-
         .search-container {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
         }
-
         .search-input, .filter-select {
             padding: 12px 20px;
             border: 1px solid var(--border);
@@ -188,13 +169,11 @@
             font-family: 'Exo 2', sans-serif;
             transition: all 0.3s ease;
         }
-
         .search-input:focus, .filter-select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .export-btn, .print-btn, .reset-btn {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
@@ -212,7 +191,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .export-btn::before, .print-btn::before, .reset-btn::before {
             content: '';
             position: absolute;
@@ -223,24 +201,19 @@
             background: rgba(255, 255, 255, 0.2);
             transition: left 0.5s ease;
         }
-
         .export-btn:hover::before, .print-btn:hover::before, .reset-btn:hover::before {
             left: 100%;
         }
-
         .export-btn:hover, .print-btn:hover, .reset-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-
         .print-btn {
             background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
         }
-
         .reset-btn {
             background: linear-gradient(135deg, var(--warning) 0%, var(--danger) 100%);
         }
-
         .tabs {
             display: flex;
             gap: 10px;
@@ -248,7 +221,6 @@
             flex-wrap: wrap;
             position: relative;
         }
-
         .tab-btn {
             flex: 1;
             min-width: 130px;
@@ -269,7 +241,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .tab-btn::before {
             content: '';
             position: absolute;
@@ -282,43 +253,35 @@
             transition: opacity 0.3s ease;
             z-index: -1;
         }
-
         .tab-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
         .tab-btn.active {
             color: white;
             border: none;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-
         .tab-btn.active::before {
             opacity: 1;
         }
-
         .section {
             display: none;
             animation: fadeIn 0.5s ease;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .section.active {
             display: block;
         }
-
         .chiller-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
             gap: 25px;
             margin-bottom: 25px;
         }
-
         .chiller-card {
             background: var(--glass);
             backdrop-filter: blur(15px);
@@ -330,7 +293,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .chiller-card::before {
             content: '';
             position: absolute;
@@ -343,27 +305,22 @@
             transform-origin: left;
             transition: transform 0.5s ease;
         }
-
         .chiller-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
         }
-
         .chiller-card:hover::before {
             transform: scaleX(1);
         }
-
         .chiller-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 20px;
         }
-
         .chiller-title-info {
             flex: 1;
         }
-
         .chiller-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.35rem;
@@ -372,18 +329,15 @@
             margin-bottom: 8px;
             letter-spacing: 0.5px;
         }
-
         .chiller-title i {
             margin-right: 12px;
             color: var(--primary);
             font-size: 1.2rem;
         }
-
         .chiller-subtitle {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.6);
         }
-
         .temp-status {
             padding: 6px 15px;
             border-radius: 20px;
@@ -392,44 +346,37 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
         .temp-normal {
             background: rgba(46, 213, 115, 0.2);
             color: var(--success);
             border: 1px solid rgba(46, 213, 115, 0.3);
         }
-
         .temp-warning {
             background: rgba(255, 165, 2, 0.2);
             color: var(--warning);
             border: 1px solid rgba(255, 165, 2, 0.3);
         }
-
         .temp-critical {
             background: rgba(255, 71, 87, 0.2);
             color: var(--danger);
             border: 1px solid rgba(255, 71, 87, 0.3);
             animation: pulse 1.5s infinite;
         }
-
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
             70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
         }
-
         .temp-inputs {
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
         .time-group {
             flex: 1;
             min-width: 100px;
         }
-
         .time-label {
             font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.6);
@@ -438,7 +385,6 @@
             align-items: center;
             gap: 8px;
         }
-
         .temp-input {
             width: 100%;
             padding: 12px;
@@ -451,27 +397,22 @@
             font-family: 'Exo 2', sans-serif;
             transition: all 0.3s ease;
         }
-
         .temp-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .temp-input.warning {
             border-color: var(--warning);
             background: rgba(255, 165, 2, 0.1);
         }
-
         .temp-input.critical {
             border-color: var(--danger);
             background: rgba(255, 71, 87, 0.1);
         }
-
         .chart-toggle {
             margin-bottom: 15px;
         }
-
         .toggle-btn {
             background: rgba(255, 255, 255, 0.1);
             color: var(--light);
@@ -486,27 +427,22 @@
             transition: all 0.3s ease;
             font-family: 'Exo 2', sans-serif;
         }
-
         .toggle-btn:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
-
         .chart-container, .detailed-chart-container {
             height: 150px;
             margin-bottom: 20px;
             position: relative;
         }
-
         .detailed-chart-container {
             display: none;
             height: 300px;
         }
-
         .readings-details {
             margin-bottom: 20px;
         }
-
         .readings-details h4 {
             margin-bottom: 12px;
             color: var(--light);
@@ -517,18 +453,15 @@
             font-weight: 600;
             letter-spacing: 0.5px;
         }
-
         .readings-table {
             width: 100%;
             border-collapse: collapse;
         }
-
         .readings-table th, .readings-table td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
-
         .readings-table th {
             background: rgba(255, 255, 255, 0.05);
             font-weight: 600;
@@ -537,33 +470,26 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
         .reading-normal {
             color: var(--success);
         }
-
         .reading-warning {
             color: var(--warning);
         }
-
         .reading-critical {
             color: var(--danger);
             font-weight: 600;
         }
-
         .deviation-negative {
             color: var(--success);
         }
-
         .deviation-positive {
             color: var(--warning);
         }
-
         .deviation-critical {
             color: var(--danger);
             font-weight: 600;
         }
-
         .unit-info summary {
             cursor: pointer;
             color: var(--primary);
@@ -574,14 +500,12 @@
             font-family: 'Exo 2', sans-serif;
             padding: 10px 0;
         }
-
         .unit-info p {
             margin: 10px 0;
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
             padding-left: 25px;
         }
-
         .save-btn {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
@@ -600,7 +524,6 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-
         .save-btn::before {
             content: '';
             position: absolute;
@@ -611,23 +534,19 @@
             background: rgba(255, 255, 255, 0.2);
             transition: left 0.5s ease;
         }
-
         .save-btn:hover::before {
             left: 100%;
         }
-
         .save-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 25px;
             margin-bottom: 25px;
         }
-
         .dashboard-card {
             background: var(--glass);
             backdrop-filter: blur(15px);
@@ -638,7 +557,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .dashboard-card::before {
             content: '';
             position: absolute;
@@ -648,7 +566,6 @@
             height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         }
-
         .dashboard-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.35rem;
@@ -660,13 +577,11 @@
             gap: 12px;
             letter-spacing: 0.5px;
         }
-
         .temp-summary {
             display: flex;
             gap: 20px;
             margin-bottom: 25px;
         }
-
         .temp-stat {
             text-align: center;
             flex: 1;
@@ -676,12 +591,10 @@
             border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
-
         .temp-stat:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
         .temp-stat-value {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.8rem;
@@ -689,13 +602,11 @@
             color: var(--primary);
             text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .temp-stat-label {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.6);
             margin-top: 5px;
         }
-
         .alert-item {
             display: flex;
             align-items: center;
@@ -705,42 +616,33 @@
             margin-bottom: 15px;
             transition: all 0.3s ease;
         }
-
         .alert-item:hover {
             transform: translateX(5px);
         }
-
         .alert-normal {
             background: rgba(46, 213, 115, 0.1);
             border: 1px solid rgba(46, 213, 115, 0.2);
         }
-
         .alert-warning {
             background: rgba(255, 165, 2, 0.1);
             border: 1px solid rgba(255, 165, 2, 0.2);
         }
-
         .alert-critical {
             background: rgba(255, 71, 87, 0.1);
             border: 1px solid rgba(255, 71, 87, 0.2);
         }
-
         .alert-item i {
             font-size: 1.8rem;
         }
-
         .alert-normal i {
             color: var(--success);
         }
-
         .alert-warning i {
             color: var(--warning);
         }
-
         .alert-critical i {
             color: var(--danger);
         }
-
         .signature-section {
             background: var(--glass);
             backdrop-filter: blur(15px);
@@ -750,13 +652,11 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             border: 1px solid var(--border);
         }
-
         .signature-inputs {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .signature-input {
             flex: 1;
             min-width: 200px;
@@ -769,13 +669,11 @@
             font-family: 'Exo 2', sans-serif;
             transition: all 0.3s ease;
         }
-
         .signature-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -789,7 +687,6 @@
             z-index: 1000;
             backdrop-filter: blur(5px);
         }
-
         .spinner {
             width: 60px;
             height: 60px;
@@ -799,11 +696,9 @@
             animation: spin 1s linear infinite;
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
         .toast {
             position: fixed;
             bottom: 30px;
@@ -820,19 +715,15 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
         }
-
         .toast.show {
             transform: translateX(0);
         }
-
         .toast.success {
             background: linear-gradient(135deg, var(--success) 0%, rgba(46, 213, 115, 0.8) 100%);
         }
-
         .toast.error {
             background: linear-gradient(135deg, var(--danger) 0%, rgba(255, 71, 87, 0.8) 100%);
         }
-
         .notification-panel {
             position: fixed;
             top: 20px;
@@ -848,7 +739,6 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-
         .notification-panel h3 {
             padding: 18px;
             border-bottom: 1px solid var(--border);
@@ -859,7 +749,6 @@
             color: var(--primary);
             letter-spacing: 0.5px;
         }
-
         .notification-item {
             display: flex;
             align-items: flex-start;
@@ -868,50 +757,39 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
         }
-
         .notification-item:last-child {
             border-bottom: none;
         }
-
         .notification-item:hover {
             background: rgba(255, 255, 255, 0.05);
         }
-
         .notification-item.alert-normal {
             background: rgba(46, 213, 115, 0.05);
         }
-
         .notification-item.alert-warning {
             background: rgba(255, 165, 2, 0.05);
         }
-
         .notification-item.alert-critical {
             background: rgba(255, 71, 87, 0.05);
         }
-
         .notification-item i {
             font-size: 1.4rem;
             margin-top: 3px;
         }
-
         .notification-item.alert-normal i {
             color: var(--success);
         }
-
         .notification-item.alert-warning i {
             color: var(--warning);
         }
-
         .notification-item.alert-critical i {
             color: var(--danger);
         }
-
         .notification-time {
             font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.5);
             margin-top: 8px;
         }
-
         /* Export Modal Styles */
         .export-modal {
             position: fixed;
@@ -926,7 +804,6 @@
             z-index: 1003;
             backdrop-filter: blur(5px);
         }
-
         .export-modal-content {
             background: var(--glass);
             backdrop-filter: blur(20px);
@@ -939,26 +816,22 @@
             position: relative;
             animation: modalFadeIn 0.3s ease;
         }
-
         @keyframes modalFadeIn {
             from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .export-modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
         }
-
         .export-modal-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.5rem;
             color: var(--light);
             letter-spacing: 0.5px;
         }
-
         .export-modal-close {
             background: none;
             border: none;
@@ -967,12 +840,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .export-modal-close:hover {
             color: var(--danger);
             transform: rotate(90deg);
         }
-
         .export-option {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
@@ -984,7 +855,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .export-option::before {
             content: '';
             position: absolute;
@@ -997,35 +867,29 @@
             transition: opacity 0.3s ease;
             z-index: -1;
         }
-
         .export-option:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
         .export-option:hover::before {
             opacity: 0.1;
         }
-
         .export-option-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.1rem;
             color: var(--primary);
             margin-bottom: 8px;
         }
-
         .export-option-desc {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.6);
         }
-
         .custom-date-range {
             display: flex;
             gap: 15px;
             margin-top: 15px;
             flex-wrap: wrap;
         }
-
         .custom-date-input {
             flex: 1;
             min-width: 150px;
@@ -1038,20 +902,17 @@
             font-family: 'Exo 2', sans-serif;
             transition: all 0.3s ease;
         }
-
         .custom-date-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .export-modal-actions {
             display: flex;
             gap: 15px;
             margin-top: 25px;
             justify-content: flex-end;
         }
-
         .export-modal-btn {
             padding: 12px 25px;
             border-radius: 10px;
@@ -1062,26 +923,21 @@
             font-family: 'Exo 2', sans-serif;
             border: none;
         }
-
         .export-modal-btn-cancel {
             background: rgba(255, 255, 255, 0.1);
             color: var(--light);
         }
-
         .export-modal-btn-cancel:hover {
             background: rgba(255, 255, 255, 0.15);
         }
-
         .export-modal-btn-export {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
         }
-
         .export-modal-btn-export:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-
         /* History Section Styles */
         .history-controls {
             display: flex;
@@ -1090,7 +946,6 @@
             flex-wrap: wrap;
             align-items: center;
         }
-
         .history-date-input, .history-filter-select {
             padding: 12px 15px;
             border: 1px solid var(--border);
@@ -1101,13 +956,11 @@
             font-family: 'Exo 2', sans-serif;
             transition: all 0.3s ease;
         }
-
         .history-date-input:focus, .history-filter-select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .history-btn {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
@@ -1123,17 +976,14 @@
             transition: all 0.3s ease;
             font-family: 'Exo 2', sans-serif;
         }
-
         .history-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-
         .history-table-container {
             overflow-x: auto;
             margin-bottom: 25px;
         }
-
         .history-table {
             width: 100%;
             border-collapse: collapse;
@@ -1141,13 +991,11 @@
             border-radius: 15px;
             overflow: hidden;
         }
-
         .history-table th, .history-table td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
-
         .history-table th {
             background: rgba(0, 212, 255, 0.1);
             font-weight: 600;
@@ -1158,15 +1006,12 @@
             position: sticky;
             top: 0;
         }
-
         .history-table tr:hover {
             background: rgba(255, 255, 255, 0.03);
         }
-
         .history-table tr:last-child td {
             border-bottom: none;
         }
-
         .history-status {
             padding: 5px 12px;
             border-radius: 20px;
@@ -1176,38 +1021,32 @@
             letter-spacing: 1px;
             display: inline-block;
         }
-
         .history-status-normal {
             background: rgba(46, 213, 115, 0.2);
             color: var(--success);
             border: 1px solid rgba(46, 213, 115, 0.3);
         }
-
         .history-status-warning {
             background: rgba(255, 165, 2, 0.2);
             color: var(--warning);
             border: 1px solid rgba(255, 165, 2, 0.3);
         }
-
         .history-status-critical {
             background: rgba(255, 71, 87, 0.2);
             color: var(--danger);
             border: 1px solid rgba(255, 71, 87, 0.3);
         }
-
         .history-chart-container {
             height: 300px;
             margin-bottom: 25px;
             position: relative;
         }
-
         .pagination {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-top: 20px;
         }
-
         .pagination-btn {
             background: rgba(255, 255, 255, 0.1);
             color: var(--light);
@@ -1219,33 +1058,27 @@
             transition: all 0.3s ease;
             font-family: 'Exo 2', sans-serif;
         }
-
         .pagination-btn:hover {
             background: rgba(255, 255, 255, 0.15);
         }
-
         .pagination-btn.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
         }
-
         .pagination-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
         .pagination-btn:disabled:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-
         .history-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
         }
-
         .history-summary-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
@@ -1254,12 +1087,10 @@
             text-align: center;
             transition: all 0.3s ease;
         }
-
         .history-summary-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
         .history-summary-value {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.8rem;
@@ -1267,26 +1098,22 @@
             color: var(--primary);
             margin-bottom: 5px;
         }
-
         .history-summary-label {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.6);
         }
-
         .no-data-message {
             text-align: center;
             padding: 40px 20px;
             color: rgba(255, 255, 255, 0.6);
             font-size: 1.1rem;
         }
-
         .no-data-message i {
             font-size: 3rem;
             margin-bottom: 15px;
             color: var(--primary);
             opacity: 0.7;
         }
-
         /* Print Styles */
         @media print {
             body {
@@ -1315,7 +1142,6 @@
                 margin-bottom: 20px;
             }
         }
-
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .header-top {
@@ -1369,7 +1195,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Export Modal -->
     <div class="export-modal" id="exportModal">
         <div class="export-modal-content">
@@ -1379,17 +1204,14 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
             <div class="export-option" onclick="selectExportOption('lifeToDate')">
                 <h3 class="export-option-title">Life to Date</h3>
                 <p class="export-option-desc">Export all temperature data from the beginning of time</p>
             </div>
-            
             <div class="export-option" onclick="selectExportOption('monthToDate')">
                 <h3 class="export-option-title">Month to Date</h3>
                 <p class="export-option-desc">Export all temperature data for the current month</p>
             </div>
-            
             <div class="export-option" onclick="selectExportOption('customRange')">
                 <h3 class="export-option-title">Custom Range</h3>
                 <p class="export-option-desc">Export temperature data for a specific date range</p>
@@ -1398,14 +1220,12 @@
                     <input type="date" class="custom-date-input" id="customEndDate" placeholder="End Date">
                 </div>
             </div>
-            
             <div class="export-modal-actions">
                 <button class="export-modal-btn export-modal-btn-cancel" onclick="closeExportModal()">Cancel</button>
                 <button class="export-modal-btn export-modal-btn-export" onclick="performExport()">Export</button>
             </div>
         </div>
     </div>
-    
     <div class="container">
         <div class="header">
             <div class="header-top">
@@ -1518,12 +1338,10 @@
                 </div>
             </div>
         </div>
-        
         <!-- History Section -->
         <div id="history" class="section">
             <div class="dashboard-card">
                 <div class="dashboard-title"><i class="fas fa-history"></i> Temperature History</div>
-                
                 <div class="history-controls">
                     <input type="date" class="history-date-input" id="historyStartDate" placeholder="Start Date">
                     <input type="date" class="history-date-input" id="historyEndDate" placeholder="End Date">
@@ -1548,7 +1366,6 @@
                         <i class="fas fa-file-export"></i> Export
                     </button>
                 </div>
-                
                 <div class="history-summary" id="historySummary">
                     <div class="history-summary-card">
                         <div class="history-summary-value" id="historyTotalReadings">0</div>
@@ -1567,11 +1384,9 @@
                         <div class="history-summary-label">Critical</div>
                     </div>
                 </div>
-                
                 <div class="history-chart-container">
                     <canvas id="history-chart"></canvas>
                 </div>
-                
                 <div class="history-table-container">
                     <table class="history-table" id="historyTable">
                         <thead>
@@ -1595,11 +1410,9 @@
                         </tbody>
                     </table>
                 </div>
-                
                 <div class="pagination" id="historyPagination"></div>
             </div>
         </div>
-        
         <div class="signature-section">
             <h3 style="margin-bottom: 18px; color: var(--light); display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-signature"></i> Digital Signatures
@@ -1610,8 +1423,9 @@
             </div>
         </div>
     </div>
+
     <script>
-        // Enhanced data structure
+        // Chiller data configuration
         const CHILLER_DATA = {
             'fv': [
                 { id: 'fv1', name: 'Chiller 1 - GARLIC', subtitle: 'ID: FV-CH-001 | Location: F&V Section A', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-garlic' },
@@ -1658,29 +1472,59 @@
                 { id: 'butchery9', name: 'Unit 9 - BUTCHERY CONTAINER 2', subtitle: 'ID: BU-009 | Location: Butchery Back', targetTemp: 1, minTemp: 0, maxTemp: 2, icon: 'fas fa-box' }
             ]
         };
-        
-        // Initialize date to today
-        document.getElementById('currentDate').valueAsDate = new Date();
-        
-        // Set default date range for history (last 2 months)
-        const today = new Date();
-        const twoMonthsAgo = new Date();
-        twoMonthsAgo.setMonth(today.getMonth() - 2);
-        document.getElementById('historyEndDate').valueAsDate = today;
-        document.getElementById('historyStartDate').valueAsDate = twoMonthsAgo;
-        
+
         // Global variables
         let temperatureData = {};
         let charts = {};
         let detailedCharts = {};
         let notifications = [];
-        let originalDataState = {}; // To track original state for reset
-        let selectedExportOption = 'lifeToDate'; // Default export option
-        let historyData = []; // To store filtered history data
-        let currentPage = 1; // Current page for pagination
-        const itemsPerPage = 20; // Items per page for pagination
+        let originalDataState = {};
+        let selectedExportOption = 'lifeToDate';
+        let historyData = [];
+        let currentPage = 1;
+        const itemsPerPage = 20;
 
-        // Load saved data from localStorage on startup
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates
+            document.getElementById('currentDate').valueAsDate = new Date();
+            const today = new Date();
+            const twoMonthsAgo = new Date();
+            twoMonthsAgo.setMonth(today.getMonth() - 2);
+            document.getElementById('historyEndDate').valueAsDate = today;
+            document.getElementById('historyStartDate').valueAsDate = twoMonthsAgo;
+            
+            // Load saved data
+            loadSavedDataFromStorage();
+            
+            // Generate chiller cards
+            generateChillerCards('fv', 'fv-chillers-grid');
+            generateChillerCards('dairy', 'dairy-chillers-grid');
+            generateChillerCards('island', 'island-freezers-grid');
+            generateChillerCards('big-freezer', 'big-freezer-grid');
+            generateChillerCards('butchery', 'butchery-grid');
+            
+            // Load saved data into UI
+            loadSavedData();
+            
+            // Store original state for reset
+            storeOriginalState();
+            
+            // Initialize charts
+            setTimeout(() => {
+                initializeCharts();
+            }, 600);
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initialize dashboard if active
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                initializeDashboard();
+            }
+        });
+
+        // Load saved data from localStorage
         function loadSavedDataFromStorage() {
             const saved = localStorage.getItem('temperatureData');
             if (saved) {
@@ -1696,46 +1540,19 @@
             }
         }
 
-        // Initialize the application
-        function initApp() {
-            showLoading();
-            // ✅ Load saved data FIRST
-            loadSavedDataFromStorage();
-            // Generate chiller cards for all sections
-            generateChillerCards('fv', 'fv-chillers-grid');
-            generateChillerCards('dairy', 'dairy-chillers-grid');
-            generateChillerCards('island', 'island-freezers-grid');
-            generateChillerCards('big-freezer', 'big-freezer-grid');
-            generateChillerCards('butchery', 'butchery-grid');
-            // ✅ Load data for current date
-            loadSavedData();
-            // Store original state for reset
-            storeOriginalState();
-            // Initialize charts after everything is loaded
-            setTimeout(() => {
-                initializeCharts();
-                hideLoading();
-            }, 600);
-            // Set up event listeners
-            setupEventListeners();
-            // Initialize dashboard if active
-            if (document.getElementById('dashboard').classList.contains('active')) {
-                initializeDashboard();
-            }
-        }
-
-        // Store the original state of the current date's data for reset
+        // Store original state for reset functionality
         function storeOriginalState() {
             const date = document.getElementById('currentDate').value;
             originalDataState = JSON.parse(JSON.stringify(temperatureData[date] || {}));
             console.log("Stored original state for reset:", originalDataState);
         }
 
-        // Generate chiller cards dynamically
+        // Generate chiller cards for each section
         function generateChillerCards(section, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
+            
             CHILLER_DATA[section].forEach(chiller => {
                 const card = document.createElement('div');
                 card.className = 'chiller-card';
@@ -1819,40 +1636,48 @@
             });
         }
 
-        // Set up event listeners
+        // Setup event listeners
         function setupEventListeners() {
             document.addEventListener('input', function(e) {
                 if (e.target.classList.contains('temp-input')) {
                     updateStatus(e.target.id);
                 }
             });
+            
             document.getElementById('searchInput').addEventListener('input', filterChillers);
             document.getElementById('statusFilter').addEventListener('change', filterChillers);
             document.getElementById('notificationBell').addEventListener('click', toggleNotifications);
+            
             document.getElementById('currentDate').addEventListener('change', function() {
                 loadSavedData();
-                storeOriginalState(); // Update stored state when date changes
+                storeOriginalState();
                 setTimeout(initializeCharts, 100);
                 if (document.getElementById('dashboard').classList.contains('active')) {
                     setTimeout(initializeDashboard, 150);
                 }
             });
+            
+            // Auto-save draft every 30 seconds
             setInterval(autoSaveDraft, 30000);
         }
 
         // Switch between tabs
         function switchTab(tabName, event) {
             showLoading();
+            
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
+            
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
+            
             document.getElementById(tabName).classList.add('active');
             if (event && event.target) {
                 event.target.classList.add('active');
             }
+            
             setTimeout(() => {
                 if (tabName === 'dashboard') {
                     initializeDashboard();
@@ -1869,6 +1694,7 @@
         function toggleDetailedChart(unitId) {
             const detailedChartContainer = document.getElementById(`detailed-chart-${unitId}`);
             const toggleBtn = detailedChartContainer.previousElementSibling.querySelector('.toggle-btn');
+            
             if (detailedChartContainer.style.display === 'block') {
                 detailedChartContainer.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="fas fa-chart-line"></i> Show Detailed Chart';
@@ -1879,18 +1705,22 @@
             }
         }
 
-        // Initialize charts for the current tab
+        // Initialize charts for all units
         function initializeCharts() {
             const activeSection = document.querySelector('.section.active');
             if (!activeSection) return;
+            
             const chartCanvases = activeSection.querySelectorAll('.chart-container canvas');
+            
             chartCanvases.forEach(canvas => {
                 const chartId = canvas.id;
                 if (charts[chartId]) charts[chartId].destroy();
+                
                 const ctx = canvas.getContext('2d');
                 const unitId = chartId.replace('chart-', '');
                 const chillerData = getChillerData(unitId);
                 if (!chillerData) return;
+                
                 let minTemp, maxTemp, borderColor, bgColor;
                 if (['fv', 'dairy', 'butchery'].includes(chillerData.section)) {
                     minTemp = chillerData.minTemp - 5;
@@ -1903,16 +1733,19 @@
                     borderColor = '#00ff88';
                     bgColor = 'rgba(0, 255, 136, 0.1)';
                 }
+                
                 const timeSlots = ['08', '12', '17'];
                 const data = timeSlots.map(slot => {
                     const input = document.getElementById(`${unitId}-${slot}`);
                     return input && input.value ? parseFloat(input.value) : null;
                 });
+                
                 const sampleData = data.some(val => val !== null) ? data : [
                     chillerData.targetTemp + (Math.random() * 2 - 1),
                     chillerData.targetTemp + (Math.random() * 2 - 1),
                     chillerData.targetTemp + (Math.random() * 2 - 1)
                 ];
+                
                 charts[chartId] = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -1974,27 +1807,34 @@
             });
         }
 
-        // Initialize detailed chart with positive/negative visualization
+        // Initialize detailed chart for a unit
         function initializeDetailedChart(unitId) {
             const canvasId = `detailed-chart-canvas-${unitId}`;
             if (detailedCharts[canvasId]) detailedCharts[canvasId].destroy();
+            
             const ctx = document.getElementById(canvasId).getContext('2d');
             const chillerData = getChillerData(unitId);
             if (!chillerData) return;
+            
             const timeSlots = ['08', '12', '17'];
             const temps = timeSlots.map(slot => {
                 const input = document.getElementById(`${unitId}-${slot}`);
                 return input && input.value ? parseFloat(input.value) : null;
             });
+            
             const deviations = temps.map(temp => temp !== null ? temp - chillerData.targetTemp : null);
+            
             const positiveGradient = ctx.createLinearGradient(0, 0, 0, 400);
             positiveGradient.addColorStop(0, 'rgba(255, 165, 2, 0.6)');
             positiveGradient.addColorStop(1, 'rgba(255, 165, 2, 0.1)');
+            
             const negativeGradient = ctx.createLinearGradient(0, 0, 0, 400);
             negativeGradient.addColorStop(0, 'rgba(46, 213, 115, 0.6)');
             negativeGradient.addColorStop(1, 'rgba(46, 213, 115, 0.1)');
+            
             const positiveData = deviations.map((dev, index) => dev > 0 ? dev : null);
             const negativeData = deviations.map((dev, index) => dev < 0 ? Math.abs(dev) : null);
+            
             detailedCharts[canvasId] = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -2059,11 +1899,13 @@
             });
         }
 
-        // ✅ Updated Dashboard: Shows all chillers/freezers
+        // Initialize dashboard
         function initializeDashboard() {
             const ctx = document.getElementById('overview-chart').getContext('2d');
             if (charts['overview-chart']) charts['overview-chart'].destroy();
+            
             const unitData = [];
+            
             for (const sectionKey in CHILLER_DATA) {
                 CHILLER_DATA[sectionKey].forEach(chiller => {
                     const unitId = chiller.id;
@@ -2073,17 +1915,23 @@
                         const input = document.getElementById(`${unitId}-${slot}`);
                         return input && input.value ? parseFloat(input.value) : null;
                     }).filter(temp => temp !== null);
+                    
                     const avgTemp = temps.length ? (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1) : 0;
+                    
                     let color = '#2ed573';
                     if (temps.some(t => t < chiller.minTemp || t > chiller.maxTemp)) color = '#ffa502';
                     if (temps.some(t => t < chiller.minTemp - 2 || t > chiller.maxTemp + 2)) color = '#ff4757';
+                    
                     unitData.push({ unitName, avgTemp: parseFloat(avgTemp), color });
                 });
             }
+            
             unitData.sort((a, b) => a.avgTemp - b.avgTemp);
+            
             const labels = unitData.map(d => d.unitName);
             const data = unitData.map(d => d.avgTemp);
             const colors = unitData.map(d => d.color);
+            
             const allTemps = data.filter(temp => temp > 0);
             document.getElementById('avg-temp').textContent = allTemps.length
                 ? (allTemps.reduce((a, b) => a + b, 0) / allTemps.length).toFixed(1) + '°C'
@@ -2094,6 +1942,7 @@
             document.getElementById('max-temp').textContent = allTemps.length
                 ? Math.max(...allTemps).toFixed(1) + '°C'
                 : '-';
+            
             charts['overview-chart'] = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -2144,19 +1993,25 @@
                     interaction: { intersect: false, mode: 'index' }
                 }
             });
+            
             updateAlerts();
         }
 
-        // Update status when temperature input changes
+        // Update temperature status
         function updateStatus(inputId) {
             const input = document.getElementById(inputId);
             const temp = parseFloat(input.value);
-            if (isNaN(temp)) { resetInputStyle(input); return; }
+            if (isNaN(temp)) { 
+                resetInputStyle(input); 
+                return; 
+            }
+            
             const unitId = inputId.split('-')[0];
             const timeSlot = inputId.split('-')[1];
             const statusElement = document.getElementById('status-' + unitId);
             const chillerData = getChillerData(unitId);
             if (!chillerData) return;
+            
             let status, statusClass, inputClass;
             if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
                 status = 'Critical';
@@ -2173,29 +2028,34 @@
                 statusClass = 'temp-normal';
                 inputClass = '';
             }
+            
             if (statusElement) {
                 statusElement.textContent = status;
                 statusElement.className = `temp-status ${statusClass}`;
             }
+            
             resetInputStyle(input);
             if (inputClass) input.classList.add(inputClass);
+            
             updateChart(unitId, inputId, temp);
             updateReadingsTable(inputId, temp, status);
+            
             const detailedChartContainer = document.getElementById(`detailed-chart-${unitId}`);
             if (detailedChartContainer.style.display === 'block') {
                 initializeDetailedChart(unitId);
             }
+            
             if (document.getElementById('dashboard').classList.contains('active')) {
                 initializeDashboard();
             }
         }
 
-        // Reset input styling
+        // Reset input style
         function resetInputStyle(input) {
             input.classList.remove('warning', 'critical');
         }
 
-        // Update chart with new data
+        // Update chart with new temperature
         function updateChart(unitId, inputId, temp) {
             const chartId = 'chart-' + unitId;
             const chart = charts[chartId];
@@ -2215,9 +2075,12 @@
             const unitId = inputId.split('-')[0];
             const chillerData = getChillerData(unitId);
             if (!chillerData) return;
+            
             const displayCell = document.getElementById(`${inputId}-display`);
             const statusCell = document.getElementById(`${inputId}-status`);
+            
             if (displayCell) displayCell.textContent = isNaN(temp) ? '-' : temp.toFixed(1) + '°C';
+            
             if (statusCell) {
                 statusCell.textContent = statusText;
                 statusCell.className = '';
@@ -2225,6 +2088,7 @@
                 else if (statusText === 'Warning') statusCell.classList.add('reading-warning');
                 else if (statusText === 'Critical') statusCell.classList.add('reading-critical');
             }
+            
             const deviationCell = document.getElementById(`${inputId}-deviation`);
             if (deviationCell) {
                 if (isNaN(temp)) {
@@ -2241,32 +2105,34 @@
             }
         }
 
-        // Save data for a section - FIXED VERSION
-        function saveData(sectionKey) { // Renamed parameter for clarity
+        // Save data to localStorage only
+        function saveData(sectionKey) {
+            showLoading();
+            
             const date = document.getElementById('currentDate').value;
             const checkerName = document.getElementById('checker-name').value;
             const supervisorName = document.getElementById('supervisor-name').value;
+            
             if (!checkerName) {
                 showToast('Please enter checker name', 'error');
                 document.getElementById('checker-name').focus();
+                hideLoading();
                 return;
             }
-            // Determine the correct grid container ID based on the section key
+            
             let gridContainerId;
-            if (sectionKey === 'fv' || sectionKey === 'dairy') {
-                gridContainerId = `${sectionKey}-chillers-grid`; // e.g., 'fv-chillers-grid'
-            } else if (sectionKey === 'island') {
-                gridContainerId = `island-freezers-grid`; // Correct ID for island freezers
-            } else if (sectionKey === 'big-freezer') {
-                gridContainerId = `big-freezer-grid`; // Correct ID for big freezer
-            } else if (sectionKey === 'butchery') {
-                gridContainerId = `butchery-grid`; // Correct ID for butchery
-            } else {
-                // Fallback or handle unexpected section keys
+            if (sectionKey === 'fv') gridContainerId = 'fv-chillers-grid';
+            else if (sectionKey === 'dairy') gridContainerId = 'dairy-chillers-grid';
+            else if (sectionKey === 'island') gridContainerId = 'island-freezers-grid';
+            else if (sectionKey === 'big-freezer') gridContainerId = 'big-freezer-grid';
+            else if (sectionKey === 'butchery') gridContainerId = 'butchery-grid';
+            else {
                 console.error(`Unknown section key: ${sectionKey}`);
                 showToast(`Error saving data for ${sectionKey}: Unknown section`, 'error');
+                hideLoading();
                 return;
             }
+            
             const data = {
                 date: date,
                 checker: checkerName,
@@ -2274,61 +2140,62 @@
                 temperatures: {},
                 timestamp: new Date().toISOString()
             };
-
-            // Get all inputs for this section using the corrected ID
+            
             const sectionGrid = document.getElementById(gridContainerId);
             if (!sectionGrid) {
-                console.error(`Grid container with ID '${gridContainerId}' not found.`);
-                showToast(`Error saving data for ${sectionKey}: Section container not found.`, 'error');
-                return; // Exit if container not found
+                showToast(`Section container not found for ${sectionKey}`, 'error');
+                hideLoading();
+                return;
             }
+            
             const inputs = sectionGrid.querySelectorAll('input.temp-input');
             inputs.forEach(input => {
                 if (input.value) {
                     data.temperatures[input.id] = parseFloat(input.value);
                 }
             });
-
-            // Initialize temperatureData structure if needed
-            if (!temperatureData[date]) {
-                temperatureData[date] = {};
-            }
-            // Save the section data using the original sectionKey
+            
+            // Save to localStorage only
+            if (!temperatureData[date]) temperatureData[date] = {};
             temperatureData[date][sectionKey] = data;
-            // ✅ Save to localStorage
             localStorage.setItem('temperatureData', JSON.stringify(temperatureData));
+            
             const tempCount = Object.keys(data.temperatures).length;
-            showToast(`${sectionKey.toUpperCase()} data saved successfully! ${tempCount} readings recorded.`, 'success');
+            showToast(`${sectionKey.toUpperCase()} data saved! ${tempCount} readings recorded.`, 'success');
             addNotification(`${sectionKey.toUpperCase()} data saved for ${date}`, 'normal');
-            storeOriginalState(); // Update stored state after saving
+            storeOriginalState();
+            hideLoading();
         }
 
-        // Load saved data for current date
+        // Load saved data from localStorage
         function loadSavedData() {
             const date = document.getElementById('currentDate').value;
-            // Reset all inputs first
+            
+            // Reset all inputs
             document.querySelectorAll('.temp-input').forEach(input => {
                 input.value = '';
                 resetInputStyle(input);
             });
+            
             document.querySelectorAll('.temp-status').forEach(el => {
                 el.textContent = 'Normal';
                 el.className = 'temp-status temp-normal';
             });
+            
             document.querySelectorAll('[id$="-display"], [id$="-status"], [id$="-deviation"]').forEach(el => {
                 el.textContent = '-';
                 el.className = '';
             });
-            // Check if we have data for this date
+            
+            // Load saved data if exists
             if (temperatureData[date]) {
-                // Load checker and supervisor names
                 const firstSection = Object.keys(temperatureData[date])[0];
                 if (firstSection && temperatureData[date][firstSection]) {
                     const data = temperatureData[date][firstSection];
                     if (data.checker) document.getElementById('checker-name').value = data.checker;
                     if (data.supervisor) document.getElementById('supervisor-name').value = data.supervisor;
                 }
-                // Load temperature data for all sections
+                
                 Object.keys(temperatureData[date]).forEach(section => {
                     const data = temperatureData[date][section];
                     if (data && data.temperatures) {
@@ -2341,28 +2208,31 @@
                         });
                     }
                 });
+                
                 showToast('Data loaded successfully', 'success');
             }
         }
 
-        // NEW: Reset current section's inputs to last saved state
+        // Reset current section to last saved state
         function resetCurrentSection() {
             const activeSection = document.querySelector('.section.active');
             if (!activeSection) {
                 showToast('No active section found.', 'error');
                 return;
             }
-            // Determine the section key based on the active section ID
+            
             const sectionKey = activeSection.id.replace('-chillers', '').replace('-freezers', '').replace('-freezer', '').replace('-chiller', '');
             console.log("Attempting to reset section:", sectionKey);
+            
             const date = document.getElementById('currentDate').value;
-
-            // Reset all inputs in the current section first
             const sectionGrid = activeSection.querySelector('.chiller-grid');
+            
             if (sectionGrid) {
+                // Reset inputs
                 sectionGrid.querySelectorAll('.temp-input').forEach(input => {
                     input.value = '';
                     resetInputStyle(input);
+                    
                     const inputId = input.id;
                     document.getElementById(`${inputId}-display`).textContent = '-';
                     document.getElementById(`${inputId}-status`).textContent = '-';
@@ -2370,38 +2240,40 @@
                     document.getElementById(`${inputId}-deviation`).textContent = '-';
                     document.getElementById(`${inputId}-deviation`).className = '';
                 });
+                
+                // Reset status indicators
                 sectionGrid.querySelectorAll('.temp-status').forEach(el => {
                     el.textContent = 'Normal';
                     el.className = 'temp-status temp-normal';
                 });
             }
-
-            // Reload the specific section's data from the stored original state
+            
+            // Restore from original state if available
             if (originalDataState && originalDataState[sectionKey]) {
-                 const sectionData = originalDataState[sectionKey];
-                 if (sectionData && sectionData.temperatures) {
+                const sectionData = originalDataState[sectionKey];
+                if (sectionData && sectionData.temperatures) {
                     Object.keys(sectionData.temperatures).forEach(inputId => {
                         const input = document.getElementById(inputId);
                         if (input) {
                             input.value = sectionData.temperatures[inputId];
-                            updateStatus(inputId); // This will also update charts and tables
+                            updateStatus(inputId);
                         }
                     });
                     showToast(`Section ${sectionKey.toUpperCase()} reset to last saved state.`, 'info');
-                 } else {
-                     showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
-                 }
+                } else {
+                    showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
+                }
             } else {
-                 showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
+                showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
             }
-
+            
             // Update dashboard if active
             if (document.getElementById('dashboard').classList.contains('active')) {
                 initializeDashboard();
             }
         }
 
-        // Auto-save draft
+        // Auto-save draft to localStorage
         function autoSaveDraft() {
             const date = document.getElementById('currentDate').value;
             const draftData = {
@@ -2409,11 +2281,13 @@
                 temperatures: {},
                 timestamp: new Date().toISOString()
             };
+            
             document.querySelectorAll('.temp-input').forEach(input => {
                 if (input.value) {
                     draftData.temperatures[input.id] = parseFloat(input.value);
                 }
             });
+            
             localStorage.setItem('temperatureDraft', JSON.stringify(draftData));
         }
 
@@ -2421,52 +2295,55 @@
         function filterChillers() {
             const searchText = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
+            
             document.querySelectorAll('.chiller-card').forEach(card => {
                 const title = card.querySelector('.chiller-title').textContent.toLowerCase();
                 const subtitle = card.querySelector('.chiller-subtitle').textContent.toLowerCase();
                 const status = card.querySelector('.temp-status').textContent.toLowerCase();
+                
                 const matchesSearch = title.includes(searchText) || subtitle.includes(searchText);
                 const matchesStatus = statusFilter === 'all' || status === statusFilter;
+                
                 card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
             });
         }
 
-        // Export Modal Functions
+        // Open export modal
         function openExportModal() {
             document.getElementById('exportModal').style.display = 'flex';
-            // Reset custom date inputs
             document.getElementById('customStartDate').value = '';
             document.getElementById('customEndDate').value = '';
             document.getElementById('customDateRange').style.display = 'none';
             selectedExportOption = 'lifeToDate';
         }
 
+        // Close export modal
         function closeExportModal() {
             document.getElementById('exportModal').style.display = 'none';
         }
 
+        // Select export option
         function selectExportOption(option) {
             selectedExportOption = option;
-            // Show/hide custom date inputs based on selection
             if (option === 'customRange') {
                 document.getElementById('customDateRange').style.display = 'flex';
             } else {
                 document.getElementById('customDateRange').style.display = 'none';
             }
             
-            // Update visual selection
             document.querySelectorAll('.export-option').forEach(el => {
                 el.style.background = 'rgba(255, 255, 255, 0.05)';
             });
+            
             event.currentTarget.style.background = 'rgba(0, 212, 255, 0.1)';
         }
 
+        // Perform export based on selected option
         function performExport() {
             let startDate, endDate;
             let fileName = 'temperature_data';
             
             if (selectedExportOption === 'lifeToDate') {
-                // Get all dates from temperatureData
                 const dates = Object.keys(temperatureData).sort();
                 if (dates.length === 0) {
                     showToast('No data available for export', 'error');
@@ -2476,7 +2353,6 @@
                 endDate = dates[dates.length - 1];
                 fileName += '_life_to_date';
             } else if (selectedExportOption === 'monthToDate') {
-                // Get first day of current month to today
                 const today = new Date();
                 const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
                 startDate = formatDate(firstDay);
@@ -2485,25 +2361,22 @@
             } else if (selectedExportOption === 'customRange') {
                 startDate = document.getElementById('customStartDate').value;
                 endDate = document.getElementById('customEndDate').value;
-                
                 if (!startDate || !endDate) {
                     showToast('Please select both start and end dates', 'error');
                     return;
                 }
-                
                 if (new Date(startDate) > new Date(endDate)) {
                     showToast('Start date must be before end date', 'error');
                     return;
                 }
-                
                 fileName += '_custom_range';
             }
             
-            // Generate CSV for the selected date range
             generateCSV(startDate, endDate, fileName);
             closeExportModal();
         }
 
+        // Format date to YYYY-MM-DD
         function formatDate(date) {
             const d = new Date(date);
             const year = d.getFullYear();
@@ -2512,12 +2385,11 @@
             return `${year}-${month}-${day}`;
         }
 
+        // Generate CSV file for export
         function generateCSV(startDate, endDate, fileName) {
-            // Start CSV content with headers
             let csvContent = "Date,Section,Unit,Time,Temperature,Status,Deviation\n";
             let dataFound = false;
             
-            // Get all dates within the range
             const dates = Object.keys(temperatureData).sort();
             const filteredDates = dates.filter(date => date >= startDate && date <= endDate);
             
@@ -2526,26 +2398,20 @@
                 return;
             }
             
-            // Iterate through each date in the range
             filteredDates.forEach(date => {
                 if (temperatureData[date]) {
-                    // Iterate through each section for this date
                     Object.keys(temperatureData[date]).forEach(sectionKey => {
                         const sectionData = temperatureData[date][sectionKey];
                         if (sectionData && sectionData.temperatures) {
-                            // Get all temperature readings for this section
                             Object.keys(sectionData.temperatures).forEach(inputId => {
                                 const temp = sectionData.temperatures[inputId];
                                 const unitId = inputId.split('-')[0];
                                 const timeSlot = inputId.split('-')[1];
-                                
-                                // Get unit information
                                 const chillerData = getChillerData(unitId);
                                 if (!chillerData) return;
                                 
-                                const unitName = chillerData.name.replace(/,/g, ';'); // Sanitize commas
+                                const unitName = chillerData.name.replace(/,/g, ';');
                                 
-                                // Determine status
                                 let status = 'Normal';
                                 if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
                                     status = 'Critical';
@@ -2553,11 +2419,9 @@
                                     status = 'Warning';
                                 }
                                 
-                                // Calculate deviation
                                 const deviation = temp - chillerData.targetTemp;
                                 const deviationStr = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
                                 
-                                // Create a row, wrapping fields in quotes for safety
                                 const row = `"${date}","${sectionKey}","${unitName}","${timeSlot}:00","${temp}","${status}","${deviationStr}"`;
                                 csvContent += row + "\n";
                                 dataFound = true;
@@ -2572,7 +2436,6 @@
                 return;
             }
             
-            // Create a Blob and download link
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -2581,46 +2444,12 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(url); // Clean up
+            URL.revokeObjectURL(url);
+            
             showToast('Data exported successfully', 'success');
         }
 
-        // Export data as CSV - FIXED VERSION (kept for backward compatibility)
-        function exportData() {
-            const date = document.getElementById('currentDate').value;
-            // Start CSV content with headers
-            let csvContent = "Section,Unit,Time,Temperature,Status,Deviation\n";
-            // Iterate through all chiller cards to gather data
-            document.querySelectorAll('.chiller-card').forEach(card => {
-                const section = card.dataset.section;
-                const unitId = card.dataset.id;
-                const unitName = card.querySelector('.chiller-title').textContent.replace(/,/g, ';'); // Sanitize commas
-                ['08', '12', '17'].forEach(time => {
-                    const tempInput = document.getElementById(`${unitId}-${time}`);
-                    const temp = tempInput && tempInput.value ? tempInput.value : '';
-                    const statusCell = document.getElementById(`${unitId}-${time}-status`);
-                    const status = statusCell && statusCell.textContent ? statusCell.textContent.replace(/,/g, ';') : '';
-                    const deviationCell = document.getElementById(`${unitId}-${time}-deviation`);
-                    const deviation = deviationCell && deviationCell.textContent ? deviationCell.textContent.replace(/,/g, ';') : '';
-                    // Create a row, wrapping fields in quotes for safety
-                    const row = `"${section}","${unitName}","${time}:00","${temp}","${status}","${deviation}"`;
-                    csvContent += row + "\n";
-                });
-            });
-            // Create a Blob and download link
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `temperature_data_${date}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url); // Clean up
-            showToast('Data exported successfully', 'success');
-        }
-
-        // Show notification panel
+        // Toggle notification panel
         function toggleNotifications() {
             const panel = document.getElementById('notificationPanel');
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
@@ -2632,7 +2461,9 @@
             const notification = { message, type, time: new Date() };
             notifications.unshift(notification);
             if (notifications.length > 50) notifications.pop();
+            
             updateNotificationPanel();
+            
             if (type !== 'normal') {
                 const badge = document.getElementById('notificationBadge');
                 badge.textContent = parseInt(badge.textContent) + 1;
@@ -2643,43 +2474,51 @@
         function updateNotificationPanel() {
             const container = document.getElementById('notification-list');
             container.innerHTML = '';
+            
             notifications.forEach(notification => {
                 const item = document.createElement('div');
                 item.className = `notification-item alert-${notification.type}`;
+                
                 let icon = 'fas fa-info-circle';
                 if (notification.type === 'warning') icon = 'fas fa-exclamation-triangle';
                 if (notification.type === 'critical') icon = 'fas fa-exclamation-circle';
+                
                 item.innerHTML = `<i class="${icon}"></i><div><p>${notification.message}</p><div class="notification-time">${formatTime(notification.time)}</div></div>`;
                 container.appendChild(item);
             });
         }
 
-        // Update alerts on dashboard
+        // Update alerts in dashboard
         function updateAlerts() {
             const alertList = document.getElementById('alert-list');
             alertList.innerHTML = '';
+            
             const criticalAlerts = document.querySelectorAll('.temp-status.temp-critical');
             if (criticalAlerts.length > 0) {
                 criticalAlerts.forEach(alert => {
                     const unitId = alert.id.replace('status-', '');
                     const unitName = document.querySelector(`[data-id="${unitId}"] .chiller-title`).textContent;
+                    
                     const alertItem = document.createElement('div');
                     alertItem.className = 'alert-item alert-critical';
                     alertItem.innerHTML = `<i class="fas fa-exclamation-circle"></i><p>CRITICAL: ${unitName} requires immediate attention</p>`;
                     alertList.appendChild(alertItem);
                 });
             }
+            
             const warningAlerts = document.querySelectorAll('.temp-status.temp-warning');
             if (warningAlerts.length > 0) {
                 warningAlerts.forEach(alert => {
                     const unitId = alert.id.replace('status-', '');
                     const unitName = document.querySelector(`[data-id="${unitId}"] .chiller-title`).textContent;
+                    
                     const alertItem = document.createElement('div');
                     alertItem.className = 'alert-item alert-warning';
                     alertItem.innerHTML = `<i class="fas fa-exclamation-triangle"></i><p>WARNING: ${unitName} needs checking</p>`;
                     alertList.appendChild(alertItem);
                 });
             }
+            
             if (criticalAlerts.length === 0 && warningAlerts.length === 0) {
                 const alertItem = document.createElement('div');
                 alertItem.className = 'alert-item alert-normal';
@@ -2688,7 +2527,7 @@
             }
         }
 
-        // History Functions
+        // Load history data
         function loadHistoryData() {
             showLoading();
             
@@ -2709,10 +2548,7 @@
                 return;
             }
             
-            // Reset pagination
             currentPage = 1;
-            
-            // Get all dates within the range
             const dates = Object.keys(temperatureData).sort();
             const filteredDates = dates.filter(date => date >= startDate && date <= endDate);
             
@@ -2722,33 +2558,25 @@
                 return;
             }
             
-            // Process history data
             historyData = [];
             let normalCount = 0;
             let warningCount = 0;
             let criticalCount = 0;
             
-            // Iterate through each date in the range
             filteredDates.forEach(date => {
                 if (temperatureData[date]) {
-                    // Iterate through each section for this date
                     Object.keys(temperatureData[date]).forEach(sectionKey => {
-                        // Apply section filter if not 'all'
                         if (sectionFilter !== 'all' && sectionKey !== sectionFilter) return;
                         
                         const sectionData = temperatureData[date][sectionKey];
                         if (sectionData && sectionData.temperatures) {
-                            // Get all temperature readings for this section
                             Object.keys(sectionData.temperatures).forEach(inputId => {
                                 const temp = sectionData.temperatures[inputId];
                                 const unitId = inputId.split('-')[0];
                                 const timeSlot = inputId.split('-')[1];
-                                
-                                // Get unit information
                                 const chillerData = getChillerData(unitId);
                                 if (!chillerData) return;
                                 
-                                // Determine status
                                 let status = 'Normal';
                                 if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
                                     status = 'Critical';
@@ -2760,14 +2588,11 @@
                                     normalCount++;
                                 }
                                 
-                                // Apply status filter if not 'all'
                                 if (statusFilter !== 'all' && status.toLowerCase() !== statusFilter.toLowerCase()) return;
                                 
-                                // Calculate deviation
                                 const deviation = temp - chillerData.targetTemp;
                                 const deviationStr = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
                                 
-                                // Add to history data
                                 historyData.push({
                                     date,
                                     section: sectionKey,
@@ -2784,21 +2609,17 @@
                 }
             });
             
-            // Update summary statistics
             document.getElementById('historyTotalReadings').textContent = historyData.length;
             document.getElementById('historyNormalCount').textContent = normalCount;
             document.getElementById('historyWarningCount').textContent = warningCount;
             document.getElementById('historyCriticalCount').textContent = criticalCount;
             
-            // Update history table
             updateHistoryTable();
-            
-            // Update history chart
             updateHistoryChart();
-            
             hideLoading();
         }
 
+        // Update history table
         function updateHistoryTable() {
             const tableBody = document.getElementById('historyTableBody');
             tableBody.innerHTML = '';
@@ -2815,13 +2636,11 @@
                 return;
             }
             
-            // Calculate pagination
             const totalPages = Math.ceil(historyData.length / itemsPerPage);
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, historyData.length);
             const paginatedData = historyData.slice(startIndex, endIndex);
             
-            // Populate table
             paginatedData.forEach(record => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -2836,17 +2655,16 @@
                 tableBody.appendChild(row);
             });
             
-            // Update pagination
             updatePagination(totalPages);
         }
 
+        // Update pagination
         function updatePagination(totalPages) {
             const paginationContainer = document.getElementById('historyPagination');
             paginationContainer.innerHTML = '';
             
             if (totalPages <= 1) return;
             
-            // Previous button
             const prevBtn = document.createElement('button');
             prevBtn.className = 'pagination-btn';
             prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
@@ -2857,7 +2675,6 @@
             };
             paginationContainer.appendChild(prevBtn);
             
-            // Page numbers
             const startPage = Math.max(1, currentPage - 2);
             const endPage = Math.min(totalPages, currentPage + 2);
             
@@ -2908,7 +2725,6 @@
                 paginationContainer.appendChild(lastBtn);
             }
             
-            // Next button
             const nextBtn = document.createElement('button');
             nextBtn.className = 'pagination-btn';
             nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
@@ -2920,14 +2736,15 @@
             paginationContainer.appendChild(nextBtn);
         }
 
+        // Update history chart
         function updateHistoryChart() {
             const ctx = document.getElementById('history-chart').getContext('2d');
             if (charts['history-chart']) charts['history-chart'].destroy();
             
             if (historyData.length === 0) return;
             
-            // Group data by date
             const groupedData = {};
+            
             historyData.forEach(record => {
                 if (!groupedData[record.date]) {
                     groupedData[record.date] = {
@@ -2939,10 +2756,7 @@
                 groupedData[record.date][record.status.toLowerCase()]++;
             });
             
-            // Sort dates
             const sortedDates = Object.keys(groupedData).sort();
-            
-            // Prepare chart data
             const labels = sortedDates;
             const normalData = sortedDates.map(date => groupedData[date].normal);
             const warningData = sortedDates.map(date => groupedData[date].warning);
@@ -3010,24 +2824,23 @@
             });
         }
 
+        // Export history data
         function exportHistoryData() {
             if (historyData.length === 0) {
                 showToast('No data available to export', 'error');
                 return;
             }
             
-            // Start CSV content with headers
             let csvContent = "Date,Section,Unit,Time,Temperature,Status,Deviation\n";
             
-            // Add all history data
             historyData.forEach(record => {
                 const row = `"${record.date}","${record.section}","${record.unitName}","${record.time}","${record.temperature}","${record.status}","${record.deviation}"`;
                 csvContent += row + "\n";
             });
             
-            // Create a Blob and download link
             const startDate = document.getElementById('historyStartDate').value;
             const endDate = document.getElementById('historyEndDate').value;
+            
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -3036,7 +2849,8 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(url); // Clean up
+            URL.revokeObjectURL(url);
+            
             showToast('History data exported successfully', 'success');
         }
 
@@ -3050,7 +2864,7 @@
             document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-        // Show toast message
+        // Show toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -3059,7 +2873,7 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Helper function to get chiller data by ID
+        // Get chiller data by ID
         function getChillerData(unitId) {
             for (const section in CHILLER_DATA) {
                 const chiller = CHILLER_DATA[section].find(item => item.id === unitId);
@@ -3068,22 +2882,10 @@
             return null;
         }
 
-        // Helper function to get all temperatures
-        function getAllTemperatures() {
-            const temps = [];
-            document.querySelectorAll('.temp-input').forEach(input => {
-                if (input.value) temps.push(parseFloat(input.value));
-            });
-            return temps;
-        }
-
-        // Helper function to format time
+        // Format time to HH:MM:SS
         function formatTime(date) {
             return new Date(date).toLocaleTimeString();
         }
-
-        // Initialize on DOM load
-        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
