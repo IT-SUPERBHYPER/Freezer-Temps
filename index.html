@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Control System</title>
+    <title>Temperature Control System (Firestore Only)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
@@ -1229,7 +1229,7 @@
     <div class="container">
         <div class="header">
             <div class="header-top">
-                <h1><i class="fas fa-temperature-low"></i> Temperature Control System</h1>
+                <h1><i class="fas fa-temperature-low"></i> Temperature Control System (Firestore)</h1>
                 <div class="header-controls">
                     <div class="date-selector">
                         <label for="currentDate">Date: </label>
@@ -1424,8 +1424,30 @@
         </div>
     </div>
 
+    <!-- ✅ Firebase: Compat CDN Scripts (Global, not modules) -->
+    <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics-compat.js"></script>
+
     <script>
-        // Chiller data configuration
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHEjS-xonvIQEZpij0j9U88Or9XSdfki0",
+            authDomain: "chiller-726ff.firebaseapp.com",
+            projectId: "chiller-726ff",
+            storageBucket: "chiller-726ff.firebasestorage.app",
+            messagingSenderId: "1038387837291",
+            appId: "1:1038387837291:web:810889b5725190d73a742e",
+            measurementId: "G-18RT6DCJBQ"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const analytics = firebase.analytics(); // Optional, if you plan to use it
+
+        // === Your Original App Code Starts Here (Firestore Only) ===
+
         const CHILLER_DATA = {
             'fv': [
                 { id: 'fv1', name: 'Chiller 1 - GARLIC', subtitle: 'ID: FV-CH-001 | Location: F&V Section A', targetTemp: 3, minTemp: 2, maxTemp: 4, icon: 'fas fa-garlic' },
@@ -1473,8 +1495,8 @@
             ]
         };
 
-        // Global variables
-        let temperatureData = {};
+        // Firestore-specific state
+        let temperatureData = {}; // Temporary in-memory cache for the current date/session
         let charts = {};
         let detailedCharts = {};
         let notifications = [];
@@ -1484,75 +1506,51 @@
         let currentPage = 1;
         const itemsPerPage = 20;
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default dates
-            document.getElementById('currentDate').valueAsDate = new Date();
-            const today = new Date();
-            const twoMonthsAgo = new Date();
-            twoMonthsAgo.setMonth(today.getMonth() - 2);
-            document.getElementById('historyEndDate').valueAsDate = today;
-            document.getElementById('historyStartDate').valueAsDate = twoMonthsAgo;
-            
-            // Load saved data
-            loadSavedDataFromStorage();
-            
-            // Generate chiller cards
+        document.getElementById('currentDate').valueAsDate = new Date();
+        const today = new Date();
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(today.getMonth() - 2);
+        document.getElementById('historyEndDate').valueAsDate = today;
+        document.getElementById('historyStartDate').valueAsDate = twoMonthsAgo;
+
+        function loadSavedDataFromStorage() {
+            // Removed: No longer loads from localStorage
+            console.log('✅ Firestore-only mode: Skipping localStorage load.');
+            temperatureData = {}; // Initialize empty cache
+        }
+
+        function initApp() {
+            showLoading();
+            loadSavedDataFromStorage(); // Now just initializes empty cache
             generateChillerCards('fv', 'fv-chillers-grid');
             generateChillerCards('dairy', 'dairy-chillers-grid');
             generateChillerCards('island', 'island-freezers-grid');
             generateChillerCards('big-freezer', 'big-freezer-grid');
             generateChillerCards('butchery', 'butchery-grid');
-            
-            // Load saved data into UI
-            loadSavedData();
-            
-            // Store original state for reset
+            loadSavedData(); // Load from Firestore
             storeOriginalState();
-            
-            // Initialize charts
             setTimeout(() => {
                 initializeCharts();
+                hideLoading();
             }, 600);
-            
-            // Setup event listeners
             setupEventListeners();
-            
-            // Initialize dashboard if active
             if (document.getElementById('dashboard').classList.contains('active')) {
                 initializeDashboard();
             }
-        });
-
-        // Load saved data from localStorage
-        function loadSavedDataFromStorage() {
-            const saved = localStorage.getItem('temperatureData');
-            if (saved) {
-                try {
-                    temperatureData = JSON.parse(saved);
-                    console.log('✅ Data loaded from localStorage');
-                } catch (e) {
-                    console.error('Failed to parse saved data', e);
-                    temperatureData = {};
-                }
-            } else {
-                temperatureData = {};
-            }
         }
 
-        // Store original state for reset functionality
         function storeOriginalState() {
+            // Removed: No longer stores to localStorage
+            console.log("Stored original state for reset (in memory only).");
+            // Keep originalDataState for reset functionality, but it's not persisted
             const date = document.getElementById('currentDate').value;
             originalDataState = JSON.parse(JSON.stringify(temperatureData[date] || {}));
-            console.log("Stored original state for reset:", originalDataState);
         }
 
-        // Generate chiller cards for each section
         function generateChillerCards(section, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
-            
             CHILLER_DATA[section].forEach(chiller => {
                 const card = document.createElement('div');
                 card.className = 'chiller-card';
@@ -1636,48 +1634,38 @@
             });
         }
 
-        // Setup event listeners
         function setupEventListeners() {
             document.addEventListener('input', function(e) {
                 if (e.target.classList.contains('temp-input')) {
                     updateStatus(e.target.id);
                 }
             });
-            
             document.getElementById('searchInput').addEventListener('input', filterChillers);
             document.getElementById('statusFilter').addEventListener('change', filterChillers);
             document.getElementById('notificationBell').addEventListener('click', toggleNotifications);
-            
-            document.getElementById('currentDate').addEventListener('change', function() {
-                loadSavedData();
+            document.getElementById('currentDate').addEventListener('change', async function() {
+                await loadSavedData(); // Await Firestore load
                 storeOriginalState();
                 setTimeout(initializeCharts, 100);
                 if (document.getElementById('dashboard').classList.contains('active')) {
                     setTimeout(initializeDashboard, 150);
                 }
             });
-            
-            // Auto-save draft every 30 seconds
-            setInterval(autoSaveDraft, 30000);
+            // Removed: autoSaveDraft interval (no localStorage)
         }
 
-        // Switch between tabs
         function switchTab(tabName, event) {
             showLoading();
-            
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
-            
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
             document.getElementById(tabName).classList.add('active');
             if (event && event.target) {
                 event.target.classList.add('active');
             }
-            
             setTimeout(() => {
                 if (tabName === 'dashboard') {
                     initializeDashboard();
@@ -1690,11 +1678,9 @@
             }, 300);
         }
 
-        // Toggle detailed chart view
         function toggleDetailedChart(unitId) {
             const detailedChartContainer = document.getElementById(`detailed-chart-${unitId}`);
             const toggleBtn = detailedChartContainer.previousElementSibling.querySelector('.toggle-btn');
-            
             if (detailedChartContainer.style.display === 'block') {
                 detailedChartContainer.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="fas fa-chart-line"></i> Show Detailed Chart';
@@ -1705,22 +1691,17 @@
             }
         }
 
-        // Initialize charts for all units
         function initializeCharts() {
             const activeSection = document.querySelector('.section.active');
             if (!activeSection) return;
-            
             const chartCanvases = activeSection.querySelectorAll('.chart-container canvas');
-            
             chartCanvases.forEach(canvas => {
                 const chartId = canvas.id;
                 if (charts[chartId]) charts[chartId].destroy();
-                
                 const ctx = canvas.getContext('2d');
                 const unitId = chartId.replace('chart-', '');
                 const chillerData = getChillerData(unitId);
                 if (!chillerData) return;
-                
                 let minTemp, maxTemp, borderColor, bgColor;
                 if (['fv', 'dairy', 'butchery'].includes(chillerData.section)) {
                     minTemp = chillerData.minTemp - 5;
@@ -1733,19 +1714,16 @@
                     borderColor = '#00ff88';
                     bgColor = 'rgba(0, 255, 136, 0.1)';
                 }
-                
                 const timeSlots = ['08', '12', '17'];
                 const data = timeSlots.map(slot => {
                     const input = document.getElementById(`${unitId}-${slot}`);
                     return input && input.value ? parseFloat(input.value) : null;
                 });
-                
                 const sampleData = data.some(val => val !== null) ? data : [
                     chillerData.targetTemp + (Math.random() * 2 - 1),
                     chillerData.targetTemp + (Math.random() * 2 - 1),
                     chillerData.targetTemp + (Math.random() * 2 - 1)
                 ];
-                
                 charts[chartId] = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -1807,34 +1785,26 @@
             });
         }
 
-        // Initialize detailed chart for a unit
         function initializeDetailedChart(unitId) {
             const canvasId = `detailed-chart-canvas-${unitId}`;
             if (detailedCharts[canvasId]) detailedCharts[canvasId].destroy();
-            
             const ctx = document.getElementById(canvasId).getContext('2d');
             const chillerData = getChillerData(unitId);
             if (!chillerData) return;
-            
             const timeSlots = ['08', '12', '17'];
             const temps = timeSlots.map(slot => {
                 const input = document.getElementById(`${unitId}-${slot}`);
                 return input && input.value ? parseFloat(input.value) : null;
             });
-            
             const deviations = temps.map(temp => temp !== null ? temp - chillerData.targetTemp : null);
-            
             const positiveGradient = ctx.createLinearGradient(0, 0, 0, 400);
             positiveGradient.addColorStop(0, 'rgba(255, 165, 2, 0.6)');
             positiveGradient.addColorStop(1, 'rgba(255, 165, 2, 0.1)');
-            
             const negativeGradient = ctx.createLinearGradient(0, 0, 0, 400);
             negativeGradient.addColorStop(0, 'rgba(46, 213, 115, 0.6)');
             negativeGradient.addColorStop(1, 'rgba(46, 213, 115, 0.1)');
-            
             const positiveData = deviations.map((dev, index) => dev > 0 ? dev : null);
             const negativeData = deviations.map((dev, index) => dev < 0 ? Math.abs(dev) : null);
-            
             detailedCharts[canvasId] = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1899,13 +1869,10 @@
             });
         }
 
-        // Initialize dashboard
         function initializeDashboard() {
             const ctx = document.getElementById('overview-chart').getContext('2d');
             if (charts['overview-chart']) charts['overview-chart'].destroy();
-            
             const unitData = [];
-            
             for (const sectionKey in CHILLER_DATA) {
                 CHILLER_DATA[sectionKey].forEach(chiller => {
                     const unitId = chiller.id;
@@ -1915,23 +1882,17 @@
                         const input = document.getElementById(`${unitId}-${slot}`);
                         return input && input.value ? parseFloat(input.value) : null;
                     }).filter(temp => temp !== null);
-                    
                     const avgTemp = temps.length ? (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1) : 0;
-                    
                     let color = '#2ed573';
                     if (temps.some(t => t < chiller.minTemp || t > chiller.maxTemp)) color = '#ffa502';
                     if (temps.some(t => t < chiller.minTemp - 2 || t > chiller.maxTemp + 2)) color = '#ff4757';
-                    
                     unitData.push({ unitName, avgTemp: parseFloat(avgTemp), color });
                 });
             }
-            
             unitData.sort((a, b) => a.avgTemp - b.avgTemp);
-            
             const labels = unitData.map(d => d.unitName);
             const data = unitData.map(d => d.avgTemp);
             const colors = unitData.map(d => d.color);
-            
             const allTemps = data.filter(temp => temp > 0);
             document.getElementById('avg-temp').textContent = allTemps.length
                 ? (allTemps.reduce((a, b) => a + b, 0) / allTemps.length).toFixed(1) + '°C'
@@ -1942,7 +1903,6 @@
             document.getElementById('max-temp').textContent = allTemps.length
                 ? Math.max(...allTemps).toFixed(1) + '°C'
                 : '-';
-            
             charts['overview-chart'] = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1993,25 +1953,18 @@
                     interaction: { intersect: false, mode: 'index' }
                 }
             });
-            
             updateAlerts();
         }
 
-        // Update temperature status
         function updateStatus(inputId) {
             const input = document.getElementById(inputId);
             const temp = parseFloat(input.value);
-            if (isNaN(temp)) { 
-                resetInputStyle(input); 
-                return; 
-            }
-            
+            if (isNaN(temp)) { resetInputStyle(input); return; }
             const unitId = inputId.split('-')[0];
             const timeSlot = inputId.split('-')[1];
             const statusElement = document.getElementById('status-' + unitId);
             const chillerData = getChillerData(unitId);
             if (!chillerData) return;
-            
             let status, statusClass, inputClass;
             if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
                 status = 'Critical';
@@ -2028,34 +1981,27 @@
                 statusClass = 'temp-normal';
                 inputClass = '';
             }
-            
             if (statusElement) {
                 statusElement.textContent = status;
                 statusElement.className = `temp-status ${statusClass}`;
             }
-            
             resetInputStyle(input);
             if (inputClass) input.classList.add(inputClass);
-            
             updateChart(unitId, inputId, temp);
             updateReadingsTable(inputId, temp, status);
-            
             const detailedChartContainer = document.getElementById(`detailed-chart-${unitId}`);
             if (detailedChartContainer.style.display === 'block') {
                 initializeDetailedChart(unitId);
             }
-            
             if (document.getElementById('dashboard').classList.contains('active')) {
                 initializeDashboard();
             }
         }
 
-        // Reset input style
         function resetInputStyle(input) {
             input.classList.remove('warning', 'critical');
         }
 
-        // Update chart with new temperature
         function updateChart(unitId, inputId, temp) {
             const chartId = 'chart-' + unitId;
             const chart = charts[chartId];
@@ -2069,18 +2015,14 @@
             }
         }
 
-        // Update readings table
         function updateReadingsTable(inputId, temp, statusText) {
             const timeSlot = inputId.split('-')[1];
             const unitId = inputId.split('-')[0];
             const chillerData = getChillerData(unitId);
             if (!chillerData) return;
-            
             const displayCell = document.getElementById(`${inputId}-display`);
             const statusCell = document.getElementById(`${inputId}-status`);
-            
             if (displayCell) displayCell.textContent = isNaN(temp) ? '-' : temp.toFixed(1) + '°C';
-            
             if (statusCell) {
                 statusCell.textContent = statusText;
                 statusCell.className = '';
@@ -2088,7 +2030,6 @@
                 else if (statusText === 'Warning') statusCell.classList.add('reading-warning');
                 else if (statusText === 'Critical') statusCell.classList.add('reading-critical');
             }
-            
             const deviationCell = document.getElementById(`${inputId}-deviation`);
             if (deviationCell) {
                 if (isNaN(temp)) {
@@ -2105,21 +2046,19 @@
             }
         }
 
-        // Save data to localStorage only
-        function saveData(sectionKey) {
-            showLoading();
-            
+        // ✅ MODIFIED saveData function - Firestore Only
+        async function saveData(sectionKey) {
             const date = document.getElementById('currentDate').value;
             const checkerName = document.getElementById('checker-name').value;
             const supervisorName = document.getElementById('supervisor-name').value;
-            
+
             if (!checkerName) {
                 showToast('Please enter checker name', 'error');
                 document.getElementById('checker-name').focus();
-                hideLoading();
                 return;
             }
-            
+
+            // Determine grid container ID based on section key
             let gridContainerId;
             if (sectionKey === 'fv') gridContainerId = 'fv-chillers-grid';
             else if (sectionKey === 'dairy') gridContainerId = 'dairy-chillers-grid';
@@ -2129,110 +2068,137 @@
             else {
                 console.error(`Unknown section key: ${sectionKey}`);
                 showToast(`Error saving data for ${sectionKey}: Unknown section`, 'error');
-                hideLoading();
                 return;
             }
-            
+
             const data = {
                 date: date,
                 checker: checkerName,
                 supervisor: supervisorName,
                 temperatures: {},
-                timestamp: new Date().toISOString()
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() // Use Firestore server timestamp
             };
-            
+
             const sectionGrid = document.getElementById(gridContainerId);
             if (!sectionGrid) {
                 showToast(`Section container not found for ${sectionKey}`, 'error');
-                hideLoading();
                 return;
             }
-            
+
             const inputs = sectionGrid.querySelectorAll('input.temp-input');
             inputs.forEach(input => {
                 if (input.value) {
                     data.temperatures[input.id] = parseFloat(input.value);
                 }
             });
-            
-            // Save to localStorage only
-            if (!temperatureData[date]) temperatureData[date] = {};
-            temperatureData[date][sectionKey] = data;
-            localStorage.setItem('temperatureData', JSON.stringify(temperatureData));
-            
+
+            // ✅ Save to Firebase Firestore ONLY
+            try {
+                const docRef = db.collection('temperature_logs').doc(`${date}_${sectionKey}`);
+                await docRef.set(data);
+                console.log('✅ Data saved to Firestore');
+                // Update in-memory cache
+                if (!temperatureData[date]) temperatureData[date] = {};
+                temperatureData[date][sectionKey] = data;
+            } catch (error) {
+                console.error('❌ Firebase save error:', error);
+                showToast('Error: Failed to save data to cloud.', 'error');
+                return; // Stop execution if save fails
+            }
+
             const tempCount = Object.keys(data.temperatures).length;
             showToast(`${sectionKey.toUpperCase()} data saved! ${tempCount} readings recorded.`, 'success');
             addNotification(`${sectionKey.toUpperCase()} data saved for ${date}`, 'normal');
-            storeOriginalState();
-            hideLoading();
+            storeOriginalState(); // Update stored state after saving
         }
 
-        // Load saved data from localStorage
-        function loadSavedData() {
+        // ✅ MODIFIED loadSavedData function - Firestore Only
+        async function loadSavedData() {
             const date = document.getElementById('currentDate').value;
-            
-            // Reset all inputs
+            // Clear inputs first
             document.querySelectorAll('.temp-input').forEach(input => {
                 input.value = '';
                 resetInputStyle(input);
             });
-            
             document.querySelectorAll('.temp-status').forEach(el => {
                 el.textContent = 'Normal';
                 el.className = 'temp-status temp-normal';
             });
-            
             document.querySelectorAll('[id$="-display"], [id$="-status"], [id$="-deviation"]').forEach(el => {
                 el.textContent = '-';
                 el.className = '';
             });
-            
-            // Load saved data if exists
-            if (temperatureData[date]) {
-                const firstSection = Object.keys(temperatureData[date])[0];
-                if (firstSection && temperatureData[date][firstSection]) {
-                    const data = temperatureData[date][firstSection];
+
+            // ✅ Load from Firestore
+            try {
+                const docRef = db.collection('temperature_logs').doc(`${date}_${getCurrentSectionKey()}`);
+                const docSnap = await docRef.get();
+
+                if (docSnap.exists) {
+                    const data = docSnap.data();
+                    temperatureData[date] = {[getCurrentSectionKey()]: data}; // Update cache
+
+                    // Populate signature fields
                     if (data.checker) document.getElementById('checker-name').value = data.checker;
                     if (data.supervisor) document.getElementById('supervisor-name').value = data.supervisor;
-                }
-                
-                Object.keys(temperatureData[date]).forEach(section => {
-                    const data = temperatureData[date][section];
-                    if (data && data.temperatures) {
+
+                    // Populate temperature inputs
+                    if (data.temperatures) {
                         Object.keys(data.temperatures).forEach(inputId => {
                             const input = document.getElementById(inputId);
                             if (input) {
                                 input.value = data.temperatures[inputId];
-                                updateStatus(inputId);
+                                updateStatus(inputId); // Update status, chart, etc.
                             }
                         });
                     }
-                });
-                
-                showToast('Data loaded successfully', 'success');
+                    showToast('Data loaded successfully from cloud.', 'success');
+                } else {
+                    console.log('No saved data found for this date and section in Firestore.');
+                    showToast('No saved data found for this date and section.', 'info');
+                    // Ensure cache is clear for this date/section if no data found
+                    if (!temperatureData[date]) temperatureData[date] = {};
+                    temperatureData[date][getCurrentSectionKey()] = {};
+                }
+            } catch (error) {
+                console.error('❌ Firestore load error:', error);
+                showToast('Error: Failed to load data from cloud.', 'error');
+                // Ensure cache is clear on error
+                if (!temperatureData[date]) temperatureData[date] = {};
+                temperatureData[date][getCurrentSectionKey()] = {};
             }
         }
 
-        // Reset current section to last saved state
+        // Helper to get the currently active section key from the active tab
+        function getCurrentSectionKey() {
+            const activeSection = document.querySelector('.section.active');
+            if (!activeSection) return null;
+            const sectionId = activeSection.id;
+            // Map section IDs back to keys
+            const idMap = {
+                'fv-chillers': 'fv',
+                'dairy-chillers': 'dairy',
+                'island-freezers': 'island',
+                'big-freezer': 'big-freezer',
+                'butchery': 'butchery'
+            };
+            return idMap[sectionId] || null;
+        }
+
         function resetCurrentSection() {
             const activeSection = document.querySelector('.section.active');
             if (!activeSection) {
                 showToast('No active section found.', 'error');
                 return;
             }
-            
             const sectionKey = activeSection.id.replace('-chillers', '').replace('-freezers', '').replace('-freezer', '').replace('-chiller', '');
             console.log("Attempting to reset section:", sectionKey);
-            
             const date = document.getElementById('currentDate').value;
             const sectionGrid = activeSection.querySelector('.chiller-grid');
-            
             if (sectionGrid) {
-                // Reset inputs
                 sectionGrid.querySelectorAll('.temp-input').forEach(input => {
                     input.value = '';
                     resetInputStyle(input);
-                    
                     const inputId = input.id;
                     document.getElementById(`${inputId}-display`).textContent = '-';
                     document.getElementById(`${inputId}-status`).textContent = '-';
@@ -2240,18 +2206,14 @@
                     document.getElementById(`${inputId}-deviation`).textContent = '-';
                     document.getElementById(`${inputId}-deviation`).className = '';
                 });
-                
-                // Reset status indicators
                 sectionGrid.querySelectorAll('.temp-status').forEach(el => {
                     el.textContent = 'Normal';
                     el.className = 'temp-status temp-normal';
                 });
             }
-            
-            // Restore from original state if available
             if (originalDataState && originalDataState[sectionKey]) {
-                const sectionData = originalDataState[sectionKey];
-                if (sectionData && sectionData.temperatures) {
+                 const sectionData = originalDataState[sectionKey];
+                 if (sectionData && sectionData.temperatures) {
                     Object.keys(sectionData.temperatures).forEach(inputId => {
                         const input = document.getElementById(inputId);
                         if (input) {
@@ -2260,55 +2222,32 @@
                         }
                     });
                     showToast(`Section ${sectionKey.toUpperCase()} reset to last saved state.`, 'info');
-                } else {
-                    showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
-                }
+                 } else {
+                     showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
+                 }
             } else {
-                showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
+                 showToast(`No saved data found for section ${sectionKey.toUpperCase()} on this date. Cleared inputs.`, 'info');
             }
-            
-            // Update dashboard if active
             if (document.getElementById('dashboard').classList.contains('active')) {
                 initializeDashboard();
             }
         }
 
-        // Auto-save draft to localStorage
-        function autoSaveDraft() {
-            const date = document.getElementById('currentDate').value;
-            const draftData = {
-                date: date,
-                temperatures: {},
-                timestamp: new Date().toISOString()
-            };
-            
-            document.querySelectorAll('.temp-input').forEach(input => {
-                if (input.value) {
-                    draftData.temperatures[input.id] = parseFloat(input.value);
-                }
-            });
-            
-            localStorage.setItem('temperatureDraft', JSON.stringify(draftData));
-        }
+        // Removed: autoSaveDraft function (no localStorage)
 
-        // Filter chillers based on search and status
         function filterChillers() {
             const searchText = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
-            
             document.querySelectorAll('.chiller-card').forEach(card => {
                 const title = card.querySelector('.chiller-title').textContent.toLowerCase();
                 const subtitle = card.querySelector('.chiller-subtitle').textContent.toLowerCase();
                 const status = card.querySelector('.temp-status').textContent.toLowerCase();
-                
                 const matchesSearch = title.includes(searchText) || subtitle.includes(searchText);
                 const matchesStatus = statusFilter === 'all' || status === statusFilter;
-                
                 card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
             });
         }
 
-        // Open export modal
         function openExportModal() {
             document.getElementById('exportModal').style.display = 'flex';
             document.getElementById('customStartDate').value = '';
@@ -2317,12 +2256,10 @@
             selectedExportOption = 'lifeToDate';
         }
 
-        // Close export modal
         function closeExportModal() {
             document.getElementById('exportModal').style.display = 'none';
         }
 
-        // Select export option
         function selectExportOption(option) {
             selectedExportOption = option;
             if (option === 'customRange') {
@@ -2330,28 +2267,25 @@
             } else {
                 document.getElementById('customDateRange').style.display = 'none';
             }
-            
             document.querySelectorAll('.export-option').forEach(el => {
                 el.style.background = 'rgba(255, 255, 255, 0.05)';
             });
-            
             event.currentTarget.style.background = 'rgba(0, 212, 255, 0.1)';
         }
 
-        // Perform export based on selected option
         function performExport() {
             let startDate, endDate;
             let fileName = 'temperature_data';
-            
             if (selectedExportOption === 'lifeToDate') {
-                const dates = Object.keys(temperatureData).sort();
-                if (dates.length === 0) {
-                    showToast('No data available for export', 'error');
-                    return;
-                }
-                startDate = dates[0];
-                endDate = dates[dates.length - 1];
-                fileName += '_life_to_date';
+                // For Firestore-only, this would require querying all documents,
+                // which is complex and potentially expensive. Limiting to date range.
+                const today = new Date();
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(today.getMonth() - 1);
+                startDate = formatDate(oneMonthAgo);
+                endDate = formatDate(today);
+                fileName += '_last_month'; // Changed label
+                showToast('Exporting last month of data (Firestore only).', 'info');
             } else if (selectedExportOption === 'monthToDate') {
                 const today = new Date();
                 const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -2371,12 +2305,10 @@
                 }
                 fileName += '_custom_range';
             }
-            
             generateCSV(startDate, endDate, fileName);
             closeExportModal();
         }
 
-        // Format date to YYYY-MM-DD
         function formatDate(date) {
             const d = new Date(date);
             const year = d.getFullYear();
@@ -2385,140 +2317,161 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Generate CSV file for export
-        function generateCSV(startDate, endDate, fileName) {
+        // ✅ MODIFIED generateCSV function - Fetches data from Firestore
+        async function generateCSV(startDate, endDate, fileName) {
+            showLoading(); // Show loading during Firestore fetch
             let csvContent = "Date,Section,Unit,Time,Temperature,Status,Deviation\n";
             let dataFound = false;
-            
-            const dates = Object.keys(temperatureData).sort();
-            const filteredDates = dates.filter(date => date >= startDate && date <= endDate);
-            
-            if (filteredDates.length === 0) {
-                showToast('No data available for the selected date range', 'error');
-                return;
-            }
-            
-            filteredDates.forEach(date => {
-                if (temperatureData[date]) {
-                    Object.keys(temperatureData[date]).forEach(sectionKey => {
-                        const sectionData = temperatureData[date][sectionKey];
-                        if (sectionData && sectionData.temperatures) {
-                            Object.keys(sectionData.temperatures).forEach(inputId => {
-                                const temp = sectionData.temperatures[inputId];
-                                const unitId = inputId.split('-')[0];
-                                const timeSlot = inputId.split('-')[1];
-                                const chillerData = getChillerData(unitId);
-                                if (!chillerData) return;
-                                
-                                const unitName = chillerData.name.replace(/,/g, ';');
-                                
-                                let status = 'Normal';
-                                if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
-                                    status = 'Critical';
-                                } else if (temp < chillerData.minTemp || temp > chillerData.maxTemp) {
-                                    status = 'Warning';
-                                }
-                                
-                                const deviation = temp - chillerData.targetTemp;
-                                const deviationStr = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
-                                
-                                const row = `"${date}","${sectionKey}","${unitName}","${timeSlot}:00","${temp}","${status}","${deviationStr}"`;
-                                csvContent += row + "\n";
-                                dataFound = true;
-                            });
-                        }
-                    });
+
+            try {
+                // Query Firestore for documents within the date range
+                const querySnapshot = await db.collection('temperature_logs')
+                    .where('date', '>=', startDate)
+                    .where('date', '<=', endDate)
+                    .get();
+
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.date;
+                    const sectionKey = Object.keys(temperatureData).find(key => temperatureData[key] === data) || 'unknown'; // This logic might need refinement if caching isn't used
+                    // A better approach is to infer section from the doc ID or structure
+                    const docId = doc.id;
+                    const inferredSection = docId.split('_')[1]; // Assumes format date_section
+
+                    if (data.temperatures) {
+                        Object.keys(data.temperatures).forEach(inputId => {
+                            const temp = data.temperatures[inputId];
+                            const unitId = inputId.split('-')[0];
+                            const timeSlot = inputId.split('-')[1];
+                            const chillerData = getChillerData(unitId);
+                            if (!chillerData) return;
+
+                            let status = 'Normal';
+                            if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
+                                status = 'Critical';
+                            } else if (temp < chillerData.minTemp || temp > chillerData.maxTemp) {
+                                status = 'Warning';
+                            }
+
+                            const deviation = temp - chillerData.targetTemp;
+                            const deviationStr = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
+                            const row = `"${date}","${inferredSection}","${chillerData.name}","${timeSlot}:00","${temp}","${status}","${deviationStr}"`;
+                            csvContent += row + "\n";
+                            dataFound = true;
+                        });
+                    }
+                });
+
+                if (!dataFound) {
+                    showToast('No temperature readings found for the selected date range in Firestore.', 'error');
+                } else {
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", `${fileName}_${startDate}_to_${endDate}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    showToast('Data exported successfully from Firestore.', 'success');
                 }
-            });
-            
-            if (!dataFound) {
-                showToast('No temperature readings found for the selected date range', 'error');
-                return;
+            } catch (error) {
+                console.error('❌ Firestore export error:', error);
+                showToast('Error: Failed to export data from Firestore.', 'error');
             }
-            
+            hideLoading();
+        }
+
+
+        function exportData() {
+            // This function can be removed or kept for local export of currently displayed data.
+            // It's less relevant now as data comes from Firestore.
+            const date = document.getElementById('currentDate').value;
+            let csvContent = "Section,Unit,Time,Temperature,Status,Deviation\n";
+            document.querySelectorAll('.chiller-card').forEach(card => {
+                const section = card.dataset.section;
+                const unitId = card.dataset.id;
+                const unitName = card.querySelector('.chiller-title').textContent.replace(/,/g, ';');
+                ['08', '12', '17'].forEach(time => {
+                    const tempInput = document.getElementById(`${unitId}-${time}`);
+                    const temp = tempInput && tempInput.value ? tempInput.value : '';
+                    const statusCell = document.getElementById(`${unitId}-${time}-status`);
+                    const status = statusCell && statusCell.textContent ? statusCell.textContent.replace(/,/g, ';') : '';
+                    const deviationCell = document.getElementById(`${unitId}-${time}-deviation`);
+                    const deviation = deviationCell && deviationCell.textContent ? deviationCell.textContent.replace(/,/g, ';') : '';
+                    const row = `"${section}","${unitName}","${time}:00","${temp}","${status}","${deviation}"`;
+                    csvContent += row + "\n";
+                });
+            });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", `${fileName}_${startDate}_to_${endDate}.csv`);
+            link.setAttribute("download", `temperature_data_${date}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            
-            showToast('Data exported successfully', 'success');
+            showToast('Current view data exported successfully (not from Firestore).', 'info');
         }
 
-        // Toggle notification panel
         function toggleNotifications() {
             const panel = document.getElementById('notificationPanel');
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
             document.getElementById('notificationBadge').textContent = '0';
         }
 
-        // Add notification
         function addNotification(message, type = 'normal') {
             const notification = { message, type, time: new Date() };
             notifications.unshift(notification);
             if (notifications.length > 50) notifications.pop();
-            
             updateNotificationPanel();
-            
             if (type !== 'normal') {
                 const badge = document.getElementById('notificationBadge');
                 badge.textContent = parseInt(badge.textContent) + 1;
             }
         }
 
-        // Update notification panel
         function updateNotificationPanel() {
             const container = document.getElementById('notification-list');
             container.innerHTML = '';
-            
             notifications.forEach(notification => {
                 const item = document.createElement('div');
                 item.className = `notification-item alert-${notification.type}`;
-                
                 let icon = 'fas fa-info-circle';
                 if (notification.type === 'warning') icon = 'fas fa-exclamation-triangle';
                 if (notification.type === 'critical') icon = 'fas fa-exclamation-circle';
-                
                 item.innerHTML = `<i class="${icon}"></i><div><p>${notification.message}</p><div class="notification-time">${formatTime(notification.time)}</div></div>`;
                 container.appendChild(item);
             });
         }
 
-        // Update alerts in dashboard
         function updateAlerts() {
             const alertList = document.getElementById('alert-list');
             alertList.innerHTML = '';
-            
             const criticalAlerts = document.querySelectorAll('.temp-status.temp-critical');
             if (criticalAlerts.length > 0) {
                 criticalAlerts.forEach(alert => {
                     const unitId = alert.id.replace('status-', '');
                     const unitName = document.querySelector(`[data-id="${unitId}"] .chiller-title`).textContent;
-                    
                     const alertItem = document.createElement('div');
                     alertItem.className = 'alert-item alert-critical';
                     alertItem.innerHTML = `<i class="fas fa-exclamation-circle"></i><p>CRITICAL: ${unitName} requires immediate attention</p>`;
                     alertList.appendChild(alertItem);
                 });
             }
-            
             const warningAlerts = document.querySelectorAll('.temp-status.temp-warning');
             if (warningAlerts.length > 0) {
                 warningAlerts.forEach(alert => {
                     const unitId = alert.id.replace('status-', '');
                     const unitName = document.querySelector(`[data-id="${unitId}"] .chiller-title`).textContent;
-                    
                     const alertItem = document.createElement('div');
                     alertItem.className = 'alert-item alert-warning';
                     alertItem.innerHTML = `<i class="fas fa-exclamation-triangle"></i><p>WARNING: ${unitName} needs checking</p>`;
                     alertList.appendChild(alertItem);
                 });
             }
-            
             if (criticalAlerts.length === 0 && warningAlerts.length === 0) {
                 const alertItem = document.createElement('div');
                 alertItem.className = 'alert-item alert-normal';
@@ -2527,103 +2480,104 @@
             }
         }
 
-        // Load history data
-        function loadHistoryData() {
+        // ✅ MODIFIED loadHistoryData function - Firestore Only
+        async function loadHistoryData() {
             showLoading();
-            
             const startDate = document.getElementById('historyStartDate').value;
             const endDate = document.getElementById('historyEndDate').value;
             const sectionFilter = document.getElementById('historySectionFilter').value;
             const statusFilter = document.getElementById('historyStatusFilter').value;
-            
+
             if (!startDate || !endDate) {
                 showToast('Please select both start and end dates', 'error');
                 hideLoading();
                 return;
             }
-            
             if (new Date(startDate) > new Date(endDate)) {
                 showToast('Start date must be before end date', 'error');
                 hideLoading();
                 return;
             }
-            
+
             currentPage = 1;
-            const dates = Object.keys(temperatureData).sort();
-            const filteredDates = dates.filter(date => date >= startDate && date <= endDate);
-            
-            if (filteredDates.length === 0) {
-                showToast('No data available for the selected date range', 'error');
-                hideLoading();
-                return;
-            }
-            
-            historyData = [];
+            historyData = []; // Clear previous data
             let normalCount = 0;
             let warningCount = 0;
             let criticalCount = 0;
-            
-            filteredDates.forEach(date => {
-                if (temperatureData[date]) {
-                    Object.keys(temperatureData[date]).forEach(sectionKey => {
-                        if (sectionFilter !== 'all' && sectionKey !== sectionFilter) return;
-                        
-                        const sectionData = temperatureData[date][sectionKey];
-                        if (sectionData && sectionData.temperatures) {
-                            Object.keys(sectionData.temperatures).forEach(inputId => {
-                                const temp = sectionData.temperatures[inputId];
-                                const unitId = inputId.split('-')[0];
-                                const timeSlot = inputId.split('-')[1];
-                                const chillerData = getChillerData(unitId);
-                                if (!chillerData) return;
-                                
-                                let status = 'Normal';
-                                if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
-                                    status = 'Critical';
-                                    criticalCount++;
-                                } else if (temp < chillerData.minTemp || temp > chillerData.maxTemp) {
-                                    status = 'Warning';
-                                    warningCount++;
-                                } else {
-                                    normalCount++;
-                                }
-                                
-                                if (statusFilter !== 'all' && status.toLowerCase() !== statusFilter.toLowerCase()) return;
-                                
-                                const deviation = temp - chillerData.targetTemp;
-                                const deviationStr = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
-                                
-                                historyData.push({
-                                    date,
-                                    section: sectionKey,
-                                    unitId,
-                                    unitName: chillerData.name,
-                                    time: `${timeSlot}:00`,
-                                    temperature: temp,
-                                    status,
-                                    deviation: deviationStr
-                                });
+
+            try {
+                // Query Firestore for documents within the date range
+                let query = db.collection('temperature_logs')
+                    .where('date', '>=', startDate)
+                    .where('date', '<=', endDate);
+
+                const querySnapshot = await query.get();
+
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const docId = doc.id;
+                    const inferredSection = docId.split('_')[1]; // Assumes format date_section
+
+                    // Apply section filter
+                    if (sectionFilter !== 'all' && inferredSection !== sectionFilter) return;
+
+                    if (data.temperatures) {
+                        Object.keys(data.temperatures).forEach(inputId => {
+                            const temp = data.temperatures[inputId];
+                            const unitId = inputId.split('-')[0];
+                            const timeSlot = inputId.split('-')[1];
+                            const chillerData = getChillerData(unitId);
+                            if (!chillerData) return; // Skip if chiller data not found
+
+                            let status = 'Normal';
+                            if (temp < chillerData.minTemp - 2 || temp > chillerData.maxTemp + 2) {
+                                status = 'Critical';
+                                criticalCount++;
+                            } else if (temp < chillerData.minTemp || temp > chillerData.maxTemp) {
+                                status = 'Warning';
+                                warningCount++;
+                            } else {
+                                normalCount++;
+                            }
+
+                            // Apply status filter
+                            if (statusFilter !== 'all' && status.toLowerCase() !== statusFilter.toLowerCase()) return;
+
+                            const deviation = temp - chillerData.targetTemp;
+                            const deviationStr = (deviation > 0 ? '+' : '') + deviation.toFixed(1) + '°C';
+                            historyData.push({
+                                date: data.date,
+                                section: inferredSection, // Use inferred section from doc ID
+                                unitId,
+                                unitName: chillerData.name,
+                                time: `${timeSlot}:00`,
+                                temperature: temp,
+                                status,
+                                deviation: deviationStr
                             });
-                        }
-                    });
-                }
-            });
-            
-            document.getElementById('historyTotalReadings').textContent = historyData.length;
-            document.getElementById('historyNormalCount').textContent = normalCount;
-            document.getElementById('historyWarningCount').textContent = warningCount;
-            document.getElementById('historyCriticalCount').textContent = criticalCount;
-            
-            updateHistoryTable();
-            updateHistoryChart();
+                        });
+                    }
+                });
+
+                document.getElementById('historyTotalReadings').textContent = historyData.length;
+                document.getElementById('historyNormalCount').textContent = normalCount;
+                document.getElementById('historyWarningCount').textContent = warningCount;
+                document.getElementById('historyCriticalCount').textContent = criticalCount;
+                updateHistoryTable();
+                updateHistoryChart();
+                showToast('History data loaded successfully from Firestore.', 'success');
+
+            } catch (error) {
+                console.error('❌ Firestore history load error:', error);
+                showToast('Error: Failed to load history data from Firestore.', 'error');
+            }
             hideLoading();
         }
 
-        // Update history table
+
         function updateHistoryTable() {
             const tableBody = document.getElementById('historyTableBody');
             tableBody.innerHTML = '';
-            
             if (historyData.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
@@ -2635,12 +2589,10 @@
                 `;
                 return;
             }
-            
             const totalPages = Math.ceil(historyData.length / itemsPerPage);
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, historyData.length);
             const paginatedData = historyData.slice(startIndex, endIndex);
-            
             paginatedData.forEach(record => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -2654,17 +2606,13 @@
                 `;
                 tableBody.appendChild(row);
             });
-            
             updatePagination(totalPages);
         }
 
-        // Update pagination
         function updatePagination(totalPages) {
             const paginationContainer = document.getElementById('historyPagination');
             paginationContainer.innerHTML = '';
-            
             if (totalPages <= 1) return;
-            
             const prevBtn = document.createElement('button');
             prevBtn.className = 'pagination-btn';
             prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
@@ -2674,10 +2622,8 @@
                 updateHistoryTable();
             };
             paginationContainer.appendChild(prevBtn);
-            
             const startPage = Math.max(1, currentPage - 2);
             const endPage = Math.min(totalPages, currentPage + 2);
-            
             if (startPage > 1) {
                 const firstBtn = document.createElement('button');
                 firstBtn.className = 'pagination-btn';
@@ -2687,7 +2633,6 @@
                     updateHistoryTable();
                 };
                 paginationContainer.appendChild(firstBtn);
-                
                 if (startPage > 2) {
                     const ellipsis = document.createElement('span');
                     ellipsis.textContent = '...';
@@ -2695,7 +2640,6 @@
                     paginationContainer.appendChild(ellipsis);
                 }
             }
-            
             for (let i = startPage; i <= endPage; i++) {
                 const pageBtn = document.createElement('button');
                 pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
@@ -2706,7 +2650,6 @@
                 };
                 paginationContainer.appendChild(pageBtn);
             }
-            
             if (endPage < totalPages) {
                 if (endPage < totalPages - 1) {
                     const ellipsis = document.createElement('span');
@@ -2714,7 +2657,6 @@
                     ellipsis.style.padding = '0 5px';
                     paginationContainer.appendChild(ellipsis);
                 }
-                
                 const lastBtn = document.createElement('button');
                 lastBtn.className = 'pagination-btn';
                 lastBtn.textContent = totalPages;
@@ -2724,7 +2666,6 @@
                 };
                 paginationContainer.appendChild(lastBtn);
             }
-            
             const nextBtn = document.createElement('button');
             nextBtn.className = 'pagination-btn';
             nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
@@ -2736,15 +2677,11 @@
             paginationContainer.appendChild(nextBtn);
         }
 
-        // Update history chart
         function updateHistoryChart() {
             const ctx = document.getElementById('history-chart').getContext('2d');
             if (charts['history-chart']) charts['history-chart'].destroy();
-            
             if (historyData.length === 0) return;
-            
             const groupedData = {};
-            
             historyData.forEach(record => {
                 if (!groupedData[record.date]) {
                     groupedData[record.date] = {
@@ -2755,13 +2692,11 @@
                 }
                 groupedData[record.date][record.status.toLowerCase()]++;
             });
-            
             const sortedDates = Object.keys(groupedData).sort();
             const labels = sortedDates;
             const normalData = sortedDates.map(date => groupedData[date].normal);
             const warningData = sortedDates.map(date => groupedData[date].warning);
             const criticalData = sortedDates.map(date => groupedData[date].critical);
-            
             charts['history-chart'] = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -2824,23 +2759,18 @@
             });
         }
 
-        // Export history data
         function exportHistoryData() {
             if (historyData.length === 0) {
                 showToast('No data available to export', 'error');
                 return;
             }
-            
             let csvContent = "Date,Section,Unit,Time,Temperature,Status,Deviation\n";
-            
             historyData.forEach(record => {
                 const row = `"${record.date}","${record.section}","${record.unitName}","${record.time}","${record.temperature}","${record.status}","${record.deviation}"`;
                 csvContent += row + "\n";
             });
-            
             const startDate = document.getElementById('historyStartDate').value;
             const endDate = document.getElementById('historyEndDate').value;
-            
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -2850,21 +2780,17 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            
             showToast('History data exported successfully', 'success');
         }
 
-        // Show loading overlay
         function showLoading() {
             document.getElementById('loadingOverlay').style.display = 'flex';
         }
 
-        // Hide loading overlay
         function hideLoading() {
             document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-        // Show toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -2873,7 +2799,6 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Get chiller data by ID
         function getChillerData(unitId) {
             for (const section in CHILLER_DATA) {
                 const chiller = CHILLER_DATA[section].find(item => item.id === unitId);
@@ -2882,10 +2807,20 @@
             return null;
         }
 
-        // Format time to HH:MM:SS
+        function getAllTemperatures() {
+            const temps = [];
+            document.querySelectorAll('.temp-input').forEach(input => {
+                if (input.value) temps.push(parseFloat(input.value));
+            });
+            return temps;
+        }
+
         function formatTime(date) {
             return new Date(date).toLocaleTimeString();
         }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+
     </script>
 </body>
 </html>
